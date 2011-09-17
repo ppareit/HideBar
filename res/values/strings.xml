@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hide Bar</string>
+    <string name="help_label">Help</string>
+    <string name="help_summary">Use the icon in the status bar to hide the statusbar,
+        swipe in from bottom of the screen to make statusbar visible again.</string> 
+    <string name="hidebar_notification">Hide status bar</string>
+</resources>
