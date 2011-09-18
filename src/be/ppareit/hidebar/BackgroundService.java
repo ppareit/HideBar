@@ -32,7 +32,6 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
-import android.view.Surface;
 import android.view.WindowManager;
 import be.ppareit.android.GlobalTouchListener;
 
@@ -46,29 +45,16 @@ public class BackgroundService extends Service {
         public void onReceive(Context context, Intent intent) {
             Log.v(TAG, "HideReceiver.onReceive");
             showBar(false);
-            new GlobalTouchListener() {
+            new GlobalTouchListener(BackgroundService.this) {
                 @Override
                 public void onTouchEvent(MotionEvent event) {
                     if (event.getAction() != MotionEvent.ACTION_DOWN) return;
                     WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
                     Display display = wm.getDefaultDisplay();
-                    int rotation = display.getRotation();
-                    switch (rotation) {
-                    case Surface.ROTATION_0:
-                        if (event.getY() < display.getHeight() - 20) return;
-                        break;
-                    case Surface.ROTATION_90:
-                        if (event.getX() > 20) return;
-                        break;
-                    case Surface.ROTATION_180:
-                        if (event.getY() > 20) return;
-                        break;
-                    case Surface.ROTATION_270:
-                        if (event.getX() < display.getHeight() - 20) return;
-                        break;
+                    if (event.getY() > display.getHeight() - 20) {
+                        showBar(true);
+                        stopListening();
                     }
-                    showBar(true);
-                    stopListening();
                 }
             }.startListening();
         }
