@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-	<Preference android:title="@string/help_label"
-		android:summary="@string/help_summary" />
+	<PreferenceCategory android:title="@string/extra_label">
+		<Preference android:title="@string/help_label"
+			android:summary="@string/help_summary" />
+		<Preference android:title="@string/about_label"
+			android:summary="@string/about_summary" android:key="about_preference" />
+	</PreferenceCategory>
 </PreferenceScreen>
