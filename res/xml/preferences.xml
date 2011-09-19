@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-	<PreferenceCategory android:title="@string/extra_label">
-		<Preference android:title="@string/help_label"
-			android:summary="@string/help_summary" />
-		<Preference android:title="@string/about_label"
-			android:summary="@string/about_summary" android:key="about_preference" />
-	</PreferenceCategory>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/settings_label">
+        <CheckBoxPreference
+            android:key="shouldrun_preference"
+            android:title="@string/running_label"
+            android:summary="@string/running_summary"
+            android:defaultValue="true"/>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/extra_label">
+        <Preference
+            android:title="@string/help_label"
+            android:summary="@string/help_summary" />
+        <Preference
+            android:title="@string/about_label"
+            android:summary="@string/about_summary"
+            android:key="about_preference" />
+    </PreferenceCategory>
 </PreferenceScreen>

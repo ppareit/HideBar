@@ -20,23 +20,54 @@ package be.ppareit.hidebar;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.util.Log;
 
+
+/**
+ * @author ppareit
+ *
+ * This preference screen is the main way to interact with the user. Instead of using
+ * a SharedPreferences.onSharedPreferenceChangeListener, all the changes are cached
+ * here. This enables us to directly make changes, otherwise we would have to wait till
+ * the user closes the preference screen.
+ *
+ */
 public class HideBarPreferences extends PreferenceActivity {
 
     private static final String TAG = HideBarPreferences.class.getSimpleName();
 
+    private Intent backgroundServiceIntent = null;
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.v(TAG, "onCreate'ing");
+        Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+
+        CheckBoxPreference shouldrunPref = (CheckBoxPreference) findPreference(
+                "shouldrun_preference");
+        shouldrunPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                if ((Boolean) newValue) {
+                    backgroundServiceIntent = new Intent(HideBarPreferences.this,
+                            BackgroundService.class);
+                    startService(backgroundServiceIntent);
+                } else {
+                    stopService(backgroundServiceIntent);
+                }
+                return true;
+            }
+        });
 
         Preference aboutPreference = findPreference("about_preference");
         aboutPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -50,9 +81,15 @@ public class HideBarPreferences extends PreferenceActivity {
             }
         });
 
-        startService(new Intent(this, BackgroundService.class));
+        if (shouldServiceRun()) {
+            backgroundServiceIntent = new Intent(this, BackgroundService.class);
+            startService(new Intent(this, BackgroundService.class));
+        }
+    }
 
-        Log.v(TAG, "onCreate'ed");
+    private boolean shouldServiceRun() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        return sp.getBoolean("shouldrun_preference", true);
     }
 }
 

@@ -2,6 +2,11 @@
 <resources>
 	<string name="app_name">Hide Bar</string>
 
+	<string name="settings_label">Settings</string>
+
+    <string name="running_label">Service running</string>
+    <string name="running_summary">To hide the statusbar, this service must be running.</string>
+
 	<string name="extra_label">Extra</string>
 
 	<string name="help_label">Help</string>

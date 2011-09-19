@@ -71,7 +71,8 @@ public class BackgroundService extends Service {
         Intent hideBarIntent = new Intent(HIDE_ACTION);
         PendingIntent pi = PendingIntent.getBroadcast(this, 0, hideBarIntent, 0);
 
-        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        NotificationManager nm =
+            (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Notification notification = new Notification.Builder(this)
         .setContentTitle(getResources().getText(R.string.hidebar_notification))
         .setSmallIcon(R.drawable.ic_icon_hidebar)
@@ -84,6 +85,9 @@ public class BackgroundService extends Service {
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
+        NotificationManager nm =
+            (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        nm.cancelAll();
         super.onDestroy();
     }
 
