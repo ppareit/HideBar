@@ -7,7 +7,12 @@
             android:key="shouldrun_preference"
             android:title="@string/running_label"
             android:summary="@string/running_summary"
-            android:defaultValue="true"/>
+            android:defaultValue="true" />
+        <CheckBoxPreference
+            android:key="runatboot_preference"
+            android:title="@string/runatboot_label"
+            android:summary="@string/runatboot_summary"
+            android:defaultValue="true" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/extra_label">

@@ -39,6 +39,20 @@ public class BackgroundService extends Service {
 
     static final String TAG = BackgroundService.class.getSimpleName();
     static final String HIDE_ACTION = "be.ppareit.hidebar.HIDE_ACTION";
+    static private Intent intent = null;
+
+    /**
+     * Only instantiate class using this method!
+     */
+    static public void start(Context context) {
+        intent = new Intent(context, BackgroundService.class);
+        context.startService(intent);
+    }
+
+    static public void stop(Context context) {
+        context.stopService(intent);
+        intent = null;
+    }
 
     class HideReceiver extends BroadcastReceiver {
         @Override

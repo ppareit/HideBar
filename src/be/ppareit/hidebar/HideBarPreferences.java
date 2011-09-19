@@ -19,7 +19,7 @@
 package be.ppareit.hidebar;
 
 import android.app.Dialog;
-import android.content.Intent;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -44,8 +44,6 @@ public class HideBarPreferences extends PreferenceActivity {
 
     private static final String TAG = HideBarPreferences.class.getSimpleName();
 
-    private Intent backgroundServiceIntent = null;
-
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,23 +51,25 @@ public class HideBarPreferences extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
 
-        CheckBoxPreference shouldrunPref = (CheckBoxPreference) findPreference(
-                "shouldrun_preference");
+        final CheckBoxPreference shouldrunPref =
+            (CheckBoxPreference) findPreference("shouldrun_preference");
+        final CheckBoxPreference runatbootPref =
+            (CheckBoxPreference) findPreference("runatboot_preference");
         shouldrunPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 if ((Boolean) newValue) {
-                    backgroundServiceIntent = new Intent(HideBarPreferences.this,
-                            BackgroundService.class);
-                    startService(backgroundServiceIntent);
+                    BackgroundService.start(getApplicationContext());
+                    runatbootPref.setEnabled(true);
                 } else {
-                    stopService(backgroundServiceIntent);
+                    BackgroundService.stop(getApplicationContext());
+                    runatbootPref.setEnabled(false);
                 }
                 return true;
             }
         });
 
-        Preference aboutPreference = findPreference("about_preference");
+        final Preference aboutPreference = findPreference("about_preference");
         aboutPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -82,14 +82,19 @@ public class HideBarPreferences extends PreferenceActivity {
         });
 
         if (shouldServiceRun()) {
-            backgroundServiceIntent = new Intent(this, BackgroundService.class);
-            startService(new Intent(this, BackgroundService.class));
+            BackgroundService.start(getApplicationContext());
         }
     }
 
     private boolean shouldServiceRun() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         return sp.getBoolean("shouldrun_preference", true);
+    }
+
+    static public boolean shouldServiceRunAtBoot(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getBoolean("runatboot_preference", true) &&
+            sp.getBoolean("shouldrun_preference", true);
     }
 }
 

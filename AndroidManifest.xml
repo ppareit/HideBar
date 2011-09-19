@@ -1,17 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="be.ppareit.hidebar" android:versionCode="1"
-	android:versionName="1.0">
-	<uses-sdk android:minSdkVersion="12" />
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="be.ppareit.hidebar"
+    android:versionCode="1"
+    android:versionName="1.0">
+    <uses-sdk
+        android:minSdkVersion="12" />
 
-	<application android:icon="@drawable/icon" android:label="@string/app_name">
-		<activity android:name=".HideBarPreferences" android:label="@string/app_name">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
-		</activity>
-		<activity android:name=".AboutActivity" android:label="@string/about_label" />
-		<service android:name=".BackgroundService" />
-	</application>
+    <uses-permission
+        android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <application
+        android:icon="@drawable/icon"
+        android:label="@string/app_name">
+        <activity
+            android:name=".HideBarPreferences"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action
+                    android:name="android.intent.action.MAIN" />
+                <category
+                    android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/about_label" />
+        <service
+            android:name=".BackgroundService" />
+        <receiver
+            android:name=".StartupReceiver">
+            <intent-filter>
+                <action
+                    android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+    </application>
+
 </manifest>

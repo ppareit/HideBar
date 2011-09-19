@@ -1,37 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">Hide Bar</string>
+    <string
+        name="app_name">Hide Bar</string>
 
-	<string name="settings_label">Settings</string>
+    <string
+        name="settings_label">Settings</string>
 
-    <string name="running_label">Service running</string>
-    <string name="running_summary">To hide the statusbar, this service must be running.</string>
+    <string
+        name="running_label">Service running</string>
+    <string
+        name="running_summary">To hide the statusbar, this service must be running.
+    </string>
 
-	<string name="extra_label">Extra</string>
+    <string
+        name="runatboot_label">Start service at boot</string>
+    <string
+        name="runatboot_summary">This will automatically start Hide Bar during boot.
+    </string>
 
-	<string name="help_label">Help</string>
-	<string name="help_summary">Use the icon in the status bar to hide the
-		statusbar, swipe in from bottom of the screen to make statusbar
-		visible again.
+    <string
+        name="extra_label">Extra</string>
+
+    <string
+        name="help_label">Help</string>
+    <string
+        name="help_summary">Use the icon in the status bar to hide the statusbar,
+        swipe in from bottom of
+        the screen to make statusbar visible again.
+    </string>
+
+    <string
+        name="about_label">About...</string>
+    <string
+        name="about_summary">Display information about Hide Bar.
 	</string>
+    <string
+        name="about_text">
+        <b>Description:</b>
+        Hide Bar can be used to toggle the honeycomb status bar on and off.\n\n
+        <b>Programming:</b>
+        Pieter Pareit (pieter.pareit@gmail.com)\n\n
+        <b>Artwork: </b>
+        Birgit Niemegeers (birgit.niemegeers@gmail.com)\n\n
+        <b>License: </b>
+        GNU General Public License v3.0\n\n
+        <b>Home Page: </b>
+        http://ppareit.github.com/HideBar/\n\n
+        <b>Code: </b>
+        http://ppareit.github.com/HideBar/\n\n
+    </string>
 
-	<string name="about_label">About...</string>
-	<string name="about_summary">Display information about Hide Bar.
-	</string>
-	<string name="about_text">
-	<b>Description:</b>
-	Hide Bar can be used to toggle the honeycomb status bar on and off.\n\n
-	<b>Programming:</b>
-	Pieter Pareit (pieter.pareit@gmail.com)\n\n
-	<b>Artwork: </b>
-	Birgit Niemegeers (birgit.niemegeers@gmail.com)\n\n
-	<b>License: </b>
-	GNU General Public License v3.0\n\n
-	<b>Home Page: </b>
-	http://ppareit.github.com/HideBar/\n\n
-	<b>Code: </b>
-	http://ppareit.github.com/HideBar/\n\n
-	</string>
-
-	<string name="hidebar_notification">Hide status bar</string>
+    <string
+        name="hidebar_notification">Hide status bar</string>
 </resources>
