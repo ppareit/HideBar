@@ -1,74 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset='utf-8'>
-
-  <title>ppareit/HideBar @ GitHub</title>
-
-  <style type="text/css">
-    body {
-      margin-top: 1.0em;
-      background-color: #ffffff;
-      font-family: Helvetica, Arial, FreeSans, san-serif;
-      color: #000000;
-    }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-    h1 { font-size: 3.8em; color: #000000; margin-bottom: 3px; }
-    h1 .small { font-size: 0.4em; }
-    h1 a { text-decoration: none }
-    h2 { font-size: 1.5em; color: #000000; }
-    h3 { text-align: center; color: #000000; }
-    a { color: #000000; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-    pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-  </style>
+<title>Hide Bar</title>
 </head>
 
 <body>
-  <a href="http://github.com/ppareit/HideBar"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+<h1><b>Hide Bar</b></h1>
 
-  <div id="container">
+Android service that hides and restores the honeycomb status bar.
 
-    <h1><a href="http://github.com/ppareit/HideBar">HideBar</a>
-      <span class="small">by <a href="http://github.com/ppareit">ppareit</a></span></h1>
+<h2>Description</h2>
+Android honeycomb contains a status bar that is always visible. In the status bar there are
+controls to move back, to move to the home screen and to show all running applications.
+The status bar also displays the clock, notifications and settings.<p/>
+Android honeycomb cannot do without this status bar, as the user must always have the
+ability to click on the back button. There is no physical button to go back, so the
+status bar must always be displayed. Yet, there are times the user want do have the extra
+screen estate taken by the status bar. For instance when playing a movie.<p/>
+Hide Bar can help with this. When running the Hide Bar service, a icon will be available
+in the status bar. When clicking on this, a notification will be shown. If the
+notification is selected, the status bar will hide itself. When the status bar is needed
+again, a swipe at the bottom of the screen will bring the status bar back on top.
 
-    <div class="description">
-      Android service that hides and restores the honeycomb statusbar .
-    </div>
+<h2>Limitations</h2>
+Hide Bar expects root to work. I cannot help you with that. I would rather implement this
+with public and documented api's. But alas, this is a hidden feature in Honeycomb. I'm
+sure that, the day it gets documented, it will be part of the system and then there will
+be no need for this application. But for now, this is the best we can do.
 
-    <h2>License</h2>
-<p>GPLv3</p>
-<h2>Authors</h2>
-<p>Programming: Pieter Pareit (pieter.pareit@gmail.com)
-<br/>Artwork: Birgit Niemegeers (birgit.niemegeers@gmail.com)
-<br/>      </p>
-<h2>Contact</h2>
-<p>Pieter Pareit (pieter.pareit@gmail.com)
-<br/>      </p>
+<h2>Hardware</h2>
+This is a list of tablets the software is know no work with. Keep in mind that root is
+required on all devices.
+<ul>
+<li/> Asus EEE Pad Transformer
+</ul>
+If your device is not in this list, don't despair. There is a big change it will work, I
+am just not yet notified of this. If it works, email me, and I'll update the list. If it
+does not work, also get in touch with me, so I know and can make it work. 
 
+<h2>Download</h2>
+You can download this application
+<a href="https://github.com/downloads/ppareit/HideBar/HideBar.apk">here</a>. It will need to be side loaded. But as you already have root on your
+device, you know how to install applications.
 
-    <h2>Download</h2>
-    <p>
-      You can download this application 
-      <a href="https://github.com/downloads/ppareit/HideBar/HideBar.apk">here</a>.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/ppareit/HideBar</pre>
-    </p>
+<h2>License</h2>
+<p>GNU General Public License version 3.0</p>
 
-    <div class="footer">
-      get the source code on GitHub : <a href="http://github.com/ppareit/HideBar">ppareit/HideBar</a>
-    </div>
+<h2>About</h2>
+<ul>
+<li/>Programming: <a href="mailto:pieter.pareit@gmail.com">Pieter Pareit</a>
+<li/>Art design: Birgit Niemegeers
+</ul>
 
-  </div>
+<h2>Code</h2>
+This is an opensource project, for which the code is available on github. See 
+<a href="http://github.com/ppareit/HideBar">ppareit/HideBar</a>. You can also clone the
+project with <a href="http://git-scm.com">Git</a> by running:
+<pre>$ git clone git://github.com/ppareit/HideBar</pre>
 
-  
+<p>
+You can <a href="mailto:pieter.pareit@gmail.com">mail</a> me with any comment, suggestion
+or correction.
+
 </body>
 </html>
