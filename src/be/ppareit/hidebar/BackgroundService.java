@@ -18,8 +18,6 @@
  ******************************************************************************/
 package be.ppareit.hidebar;
 
-import java.io.IOException;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -41,6 +39,8 @@ public class BackgroundService extends Service {
     static final String HIDE_ACTION = "be.ppareit.hidebar.HIDE_ACTION";
     static private Intent intent = null;
 
+    private GlobalTouchListener swipeUpTouchListener = null;
+
     /**
      * Only instantiate class using this method!
      */
@@ -58,8 +58,12 @@ public class BackgroundService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.v(TAG, "HideReceiver.onReceive");
+
+            // we received a the intent to hide the statusbar
             showBar(false);
-            new GlobalTouchListener(BackgroundService.this) {
+
+            // make a touch listener, on correct touch we show the statusbar and stop
+            swipeUpTouchListener = new GlobalTouchListener(BackgroundService.this) {
                 @Override
                 public void onTouchEvent(MotionEvent event) {
                     if (event.getAction() != MotionEvent.ACTION_DOWN) return;
@@ -70,7 +74,8 @@ public class BackgroundService extends Service {
                         stopListening();
                     }
                 }
-            }.startListening();
+            };
+            swipeUpTouchListener.startListening();
         }
     }
 
@@ -78,13 +83,15 @@ public class BackgroundService extends Service {
     public void onCreate() {
         Log.v(TAG, "onCreate");
 
+        // TODO: call can be removed, but this is helpfull during development
         showBar(true);
 
+        // create the intent that can hide the statusbar
         registerReceiver(new HideReceiver(), new IntentFilter(HIDE_ACTION));
-
         Intent hideBarIntent = new Intent(HIDE_ACTION);
         PendingIntent pi = PendingIntent.getBroadcast(this, 0, hideBarIntent, 0);
 
+        // create the notification used to start the intent to hide the statusbar
         NotificationManager nm =
             (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Notification notification = new Notification.Builder(this)
@@ -99,15 +106,24 @@ public class BackgroundService extends Service {
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
+
+        // remove the notification
         NotificationManager nm =
             (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         nm.cancelAll();
-        super.onDestroy();
+
+        // we where asked to stop running, so make sure the user gets back his status bar
+        showBar(true);
+
+        // also stop listening to the swipe up events
+        swipeUpTouchListener.stopListening();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v(TAG, "onStartCommand");
+
+        // return sticky, so android will keep our service running
         return Service.START_STICKY;
     }
 
@@ -129,9 +145,7 @@ public class BackgroundService extends Service {
                         "su","-c","service call activity 79 s16 com.android.systemui"});
                 proc.waitFor();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
