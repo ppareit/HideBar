@@ -18,8 +18,9 @@
  ******************************************************************************/
 package be.ppareit.android;
 
-import java.io.DataInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import android.content.Context;
 import android.graphics.Point;
@@ -64,23 +65,24 @@ public abstract class GlobalTouchListener {
                 .command("su", "-c", "getevent")
                 .redirectErrorStream(true)
                 .start();
-                DataInputStream in = new DataInputStream(process.getInputStream());
+                BufferedReader stdout = new BufferedReader(
+                        new InputStreamReader(process.getInputStream()));
                 // keep track when touch started
                 long downTime = -1;
                 // keep track of position
                 Point pos = new Point();
                 while (keepGettingTouchEvents) {
-                    String line = in.readLine();
+                    String line = stdout.readLine();
                     if (line.equals("/dev/input/event1: 0003 0039 00000000")) {
                         // this is touch
                         if (downTime == -1) downTime = SystemClock.uptimeMillis();
                         final long eventTime = SystemClock.uptimeMillis();
-                        line = readLineAndCheckStart(in, "/dev/input/event1: 0003 0030 ");
-                        line = readLineAndCheckStart(in, "/dev/input/event1: 0003 0035 ");
+                        line = readLineAndCheckStart(stdout, "/dev/input/event1: 0003 0030 ");
+                        line = readLineAndCheckStart(stdout, "/dev/input/event1: 0003 0035 ");
                         String xCoord = line.substring(line.lastIndexOf(' ') + 1);
-                        line = readLineAndCheckStart(in, "/dev/input/event1: 0003 0036 ");
+                        line = readLineAndCheckStart(stdout, "/dev/input/event1: 0003 0036 ");
                         String yCoord = line.substring(line.lastIndexOf(' ') + 1);
-                        line = readLineAndCheckStart(in,
+                        line = readLineAndCheckStart(stdout,
                                 "/dev/input/event1: 0000 0002 00000000");
                         pos.x = Integer.parseInt(xCoord, 16);
                         pos.y = Integer.parseInt(yCoord, 16);
@@ -123,9 +125,10 @@ public abstract class GlobalTouchListener {
             return null;
         }
 
-        private String readLineAndCheckStart(DataInputStream in, String startsWith)
+        private String readLineAndCheckStart(BufferedReader in, String startsWith)
         throws IOException {
             String line = in.readLine();
+            Log.v(TAG, line);
             if (! line.startsWith(startsWith)) {
                 throw new IOException();
             }
@@ -154,7 +157,9 @@ public abstract class GlobalTouchListener {
         keepGettingTouchEvents = false;
         while (retry) {
             try {
-                touchEventThread.join();
+                // the thread probably is blocked on input, so timeout quickly
+                // TODO: find a better way to stop the thread (I'm not sure it is stopped)
+                touchEventThread.join(100);
                 retry = false;
             } catch (InterruptedException e) {
                 // swallow
