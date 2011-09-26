@@ -73,6 +73,7 @@ public class BackgroundService extends Service {
                         Log.v(TAG, "Swipe Up detected");
                         showBar(true);
                         stopListening();
+                        swipeUpTouchListener = null;
                     }
                 }
             };
@@ -117,7 +118,10 @@ public class BackgroundService extends Service {
         showBar(true);
 
         // also stop listening to the swipe up events
-        swipeUpTouchListener.stopListening();
+        if (swipeUpTouchListener != null) {
+            swipeUpTouchListener.stopListening();
+            swipeUpTouchListener = null;
+        }
     }
 
     @Override
