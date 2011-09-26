@@ -71,19 +71,32 @@ public abstract class GlobalTouchListener {
                 long downTime = -1;
                 // keep track of position
                 Point pos = new Point();
+                // the file that contains touch input
+                String deviceFile = null;
                 while (keepGettingTouchEvents) {
                     String line = stdout.readLine();
-                    if (line.equals("/dev/input/event1: 0003 0039 00000000")) {
+                    if (line.startsWith("add device")) {
+                        // the output enumerates all devices, we want all touch input so
+                        // look for that device, currently I only know atmel-maxtouch but
+                        // more might be needed, thus adding new devices is probably here
+                        // TODO: it is possible to do the device registering outside loop
+                        String testDeviceFile = line.split(": ")[1];
+                        line = readLineAndCheckStart(stdout, "  name:     \"");
+                        String device = line.split("\"")[1];
+                        if (!device.equals("atmel-maxtouch"))
+                            continue;
+                        deviceFile = testDeviceFile;
+                    } else if (line.equals(deviceFile + ": 0003 0039 00000000")) {
                         // this is touch
                         if (downTime == -1) downTime = SystemClock.uptimeMillis();
                         final long eventTime = SystemClock.uptimeMillis();
-                        line = readLineAndCheckStart(stdout, "/dev/input/event1: 0003 0030 ");
-                        line = readLineAndCheckStart(stdout, "/dev/input/event1: 0003 0035 ");
+                        line = readLineAndCheckStart(stdout, deviceFile + ": 0003 0030 ");
+                        line = readLineAndCheckStart(stdout, deviceFile + ": 0003 0035 ");
                         String xCoord = line.substring(line.lastIndexOf(' ') + 1);
-                        line = readLineAndCheckStart(stdout, "/dev/input/event1: 0003 0036 ");
+                        line = readLineAndCheckStart(stdout, deviceFile + ": 0003 0036 ");
                         String yCoord = line.substring(line.lastIndexOf(' ') + 1);
                         line = readLineAndCheckStart(stdout,
-                                "/dev/input/event1: 0000 0002 00000000");
+                                deviceFile + ": 0000 0002 00000000");
                         pos.x = Integer.parseInt(xCoord, 16);
                         pos.y = Integer.parseInt(yCoord, 16);
                         pos = normalizeScreenPosition(pos);
@@ -91,7 +104,7 @@ public abstract class GlobalTouchListener {
                                 MotionEvent.ACTION_DOWN, pos.x, pos.y, 0);
                         // Log.v(TAG, "Downevent: " + pos.x + " " + pos.y);
                         onTouchEvent(event);
-                    } else if (line.equals("/dev/input/event1: 0000 0002 00000000")) {
+                    } else if (line.equals(deviceFile + ": 0000 0002 00000000")) {
                         // this event by itself is stop touching
                         // now use the starting downtime, and last known x and y position
                         final long eventTime = SystemClock.uptimeMillis();
@@ -101,7 +114,7 @@ public abstract class GlobalTouchListener {
                         onTouchEvent(event);
                     }
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 process.destroy();
