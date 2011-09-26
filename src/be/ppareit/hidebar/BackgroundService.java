@@ -59,7 +59,7 @@ public class BackgroundService extends Service {
         public void onReceive(Context context, Intent intent) {
             Log.v(TAG, "HideReceiver.onReceive");
 
-            // we received a the intent to hide the statusbar
+            // we received the intent to hide the statusbar
             showBar(false);
 
             // make a touch listener, on correct touch we show the statusbar and stop
@@ -70,6 +70,7 @@ public class BackgroundService extends Service {
                     WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
                     Display display = wm.getDefaultDisplay();
                     if (event.getY() > display.getHeight() - 20) {
+                        Log.v(TAG, "Swipe Up detected");
                         showBar(true);
                         stopListening();
                     }
