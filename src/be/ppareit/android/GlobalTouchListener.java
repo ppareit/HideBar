@@ -30,6 +30,7 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 
 /**
@@ -46,6 +47,8 @@ public abstract class GlobalTouchListener {
     // display needed to normalize coordinates depending on rotation
     private final Display display;
 
+    private final Context context;
+
     // the touch events are received in a separate thread
     Thread touchEventThread = null;
     volatile boolean keepGettingTouchEvents = false;
@@ -54,6 +57,7 @@ public abstract class GlobalTouchListener {
     public GlobalTouchListener(Context context) {
         this.display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
         .getDefaultDisplay();
+        this.context = context;
     }
 
     Runnable getTouchEvents = new Runnable() {
@@ -67,12 +71,19 @@ public abstract class GlobalTouchListener {
                 .start();
                 BufferedReader stdout = new BufferedReader(
                         new InputStreamReader(process.getInputStream()));
+                Toast.makeText(context, "Got outstream for getevent",
+                        Toast.LENGTH_SHORT).show();
                 // keep track when touch started
                 long downTime = -1;
                 // keep track of position
                 Point pos = new Point();
+                // is this a down event of up event
+                int action = MotionEvent.ACTION_CANCEL;
                 // the file that contains touch input
                 String deviceFile = null;
+                // for some devices, the touch up must be detected by 2 times
+                // /dev/input/event?: 0000 0002 00000000
+                boolean gaveTouch = false;
                 while (keepGettingTouchEvents) {
                     String line = stdout.readLine();
                     if (line.startsWith("add device")) {
@@ -83,35 +94,52 @@ public abstract class GlobalTouchListener {
                         String testDeviceFile = line.split(": ")[1];
                         line = readLineAndCheckStart(stdout, "  name:     \"");
                         String device = line.split("\"")[1];
-                        if (!device.equals("atmel-maxtouch"))
+                        if (!device.equals("atmel-maxtouch") && !device.equals("it7260")
+                                && !device.equals("qtouch-touchscreen"))
                             continue;
                         deviceFile = testDeviceFile;
-                    } else if (line.equals(deviceFile + ": 0003 0039 00000000")) {
+                        Toast.makeText(context, "Got correct device on file: " + deviceFile,
+                                Toast.LENGTH_SHORT).show();
+                    } else if (line.equals(deviceFile + ": 0003 ")) {
                         // this is touch
-                        if (downTime == -1) downTime = SystemClock.uptimeMillis();
-                        final long eventTime = SystemClock.uptimeMillis();
-                        line = readLineAndCheckStart(stdout, deviceFile + ": 0003 0030 ");
-                        line = readLineAndCheckStart(stdout, deviceFile + ": 0003 0035 ");
-                        String xCoord = line.substring(line.lastIndexOf(' ') + 1);
-                        line = readLineAndCheckStart(stdout, deviceFile + ": 0003 0036 ");
-                        String yCoord = line.substring(line.lastIndexOf(' ') + 1);
-                        line = readLineAndCheckStart(stdout,
-                                deviceFile + ": 0000 0002 00000000");
-                        pos.x = Integer.parseInt(xCoord, 16);
-                        pos.y = Integer.parseInt(yCoord, 16);
-                        pos = normalizeScreenPosition(pos);
-                        MotionEvent event = MotionEvent.obtain(downTime, eventTime,
-                                MotionEvent.ACTION_DOWN, pos.x, pos.y, 0);
-                        // Log.v(TAG, "Downevent: " + pos.x + " " + pos.y);
-                        onTouchEvent(event);
+                        Toast.makeText(context, "Screen touched, trying to find out where",
+                                Toast.LENGTH_SHORT).show();
+                        gaveTouch = false; // not yet given the touch event
+                        String components[] = line.split(" ");
+                        String key = components[2];
+                        int val = Integer.parseInt(components[3], 16);
+                        if (key.equals("0035")) {
+                            pos.x = val;
+                        } else if (key.equals("0036")) {
+                            pos.y = val;
+                        } else if (key.equals("0030")) {
+                            // pressure (I guess)
+                            if (val > 2) {
+                                action = MotionEvent.ACTION_DOWN;
+                                if (downTime == -1) downTime = SystemClock.uptimeMillis();
+                            } else {
+                                action = MotionEvent.ACTION_UP;
+                            }
+                        }
                     } else if (line.equals(deviceFile + ": 0000 0002 00000000")) {
-                        // this event by itself is stop touching
-                        // now use the starting downtime, and last known x and y position
+                        // now was the event complete
+                        if (action==MotionEvent.ACTION_UP && downTime == -1) {
+                            Toast.makeText(context, "Ignoring double UP",
+                                    Toast.LENGTH_SHORT).show();
+                            continue; // we just did an up
+                        }
+                        // check if we just gave a touch event, if so, send touch up
+                        if (gaveTouch)
+                            action = MotionEvent.ACTION_UP;
                         final long eventTime = SystemClock.uptimeMillis();
+                        pos = normalizeScreenPosition(pos);
+                        Toast.makeText(context, "Screen touched ("+pos.x+","+pos.y+")",
+                                Toast.LENGTH_SHORT).show();
                         MotionEvent event = MotionEvent.obtain(downTime, eventTime,
-                                MotionEvent.ACTION_UP, pos.x, pos.y, 0);
-                        downTime = -1;
+                                action, pos.x, pos.y, 0);
+                        if (action==MotionEvent.ACTION_UP) downTime = -1;
                         onTouchEvent(event);
+                        gaveTouch = true; // now we just gave the touch event
                     }
                 }
             } catch (Exception e) {
