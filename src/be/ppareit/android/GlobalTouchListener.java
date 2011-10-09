@@ -52,6 +52,7 @@ public abstract class GlobalTouchListener {
     Thread touchEventThread = null;
     volatile boolean keepGettingTouchEvents = false;
 
+    boolean inverted = false;
 
     public GlobalTouchListener(Context context) {
         this.display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
@@ -60,6 +61,7 @@ public abstract class GlobalTouchListener {
     }
 
     Runnable getTouchEvents = new Runnable() {
+
         @Override
         public void run() {
             Process process = null;
@@ -91,10 +93,13 @@ public abstract class GlobalTouchListener {
                         String testDeviceFile = line.split(": ")[1];
                         line = readLineAndCheckStart(stdout, "  name:     \"");
                         String device = line.split("\"")[1];
+                        Log.v(TAG, "Possible device: " + device);
                         if (!device.equals("atmel-maxtouch") && !device.equals("it7260")
                                 && !device.equals("qtouch-touchscreen"))
                             continue;
                         deviceFile = testDeviceFile;
+                        if (device.equals("qtouch-touchscreen"))
+                            inverted = true;
                     } else if (line.startsWith(deviceFile + ": 0003 ")) {
                         // this is touch
                         gaveTouch = false; // not yet given the touch event
@@ -139,15 +144,31 @@ public abstract class GlobalTouchListener {
         }
 
         private Point normalizeScreenPosition(Point pos) {
-            final int rotation = display.getRotation();
+            int rotation = display.getRotation();
+            /*
+            if (inverted) {
+                switch (rotation) {
+                case Surface.ROTATION_180:
+                    rotation = Surface.ROTATION_0;
+                    break;
+                case Surface.ROTATION_270:
+                    rotation = Surface.ROTATION_90;
+                    break;
+                }
+            }
+            */
             switch (rotation) {
             case Surface.ROTATION_0:
+                //Log.v(TAG, "ROTATION_0 " + pos.x + " " + pos.y);
                 return pos;
             case Surface.ROTATION_90:
+                //Log.v(TAG, "ROTATION_90 " + pos.x + " " + pos.y);
                 return new Point(pos.y, display.getHeight() - pos.x);
             case Surface.ROTATION_180:
+                //Log.v(TAG, "ROTATION_180 " + pos.x + " " + pos.y);
                 return new Point(display.getWidth() - pos.x, display.getHeight() - pos.y);
             case Surface.ROTATION_270:
+                //Log.v(TAG, "ROTATION_270 " + pos.x + " " + pos.y);
                 return new Point(display.getWidth() - pos.y, pos.x);
             }
             assert false : "Cannot be reached";
@@ -157,7 +178,6 @@ public abstract class GlobalTouchListener {
         private String readLineAndCheckStart(BufferedReader in, String startsWith)
         throws IOException {
             String line = in.readLine();
-            Log.v(TAG, line);
             if (! line.startsWith(startsWith)) {
                 throw new IOException();
             }
