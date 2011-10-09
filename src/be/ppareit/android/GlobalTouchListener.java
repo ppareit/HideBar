@@ -30,7 +30,6 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 
 /**
@@ -71,8 +70,6 @@ public abstract class GlobalTouchListener {
                 .start();
                 BufferedReader stdout = new BufferedReader(
                         new InputStreamReader(process.getInputStream()));
-                Toast.makeText(context, "Got outstream for getevent",
-                        Toast.LENGTH_SHORT).show();
                 // keep track when touch started
                 long downTime = -1;
                 // keep track of position
@@ -98,12 +95,8 @@ public abstract class GlobalTouchListener {
                                 && !device.equals("qtouch-touchscreen"))
                             continue;
                         deviceFile = testDeviceFile;
-                        Toast.makeText(context, "Got correct device on file: " + deviceFile,
-                                Toast.LENGTH_SHORT).show();
-                    } else if (line.equals(deviceFile + ": 0003 ")) {
+                    } else if (line.startsWith(deviceFile + ": 0003 ")) {
                         // this is touch
-                        Toast.makeText(context, "Screen touched, trying to find out where",
-                                Toast.LENGTH_SHORT).show();
                         gaveTouch = false; // not yet given the touch event
                         String components[] = line.split(" ");
                         String key = components[2];
@@ -124,8 +117,6 @@ public abstract class GlobalTouchListener {
                     } else if (line.equals(deviceFile + ": 0000 0002 00000000")) {
                         // now was the event complete
                         if (action==MotionEvent.ACTION_UP && downTime == -1) {
-                            Toast.makeText(context, "Ignoring double UP",
-                                    Toast.LENGTH_SHORT).show();
                             continue; // we just did an up
                         }
                         // check if we just gave a touch event, if so, send touch up
@@ -133,8 +124,6 @@ public abstract class GlobalTouchListener {
                             action = MotionEvent.ACTION_UP;
                         final long eventTime = SystemClock.uptimeMillis();
                         pos = normalizeScreenPosition(pos);
-                        Toast.makeText(context, "Screen touched ("+pos.x+","+pos.y+")",
-                                Toast.LENGTH_SHORT).show();
                         MotionEvent event = MotionEvent.obtain(downTime, eventTime,
                                 action, pos.x, pos.y, 0);
                         if (action==MotionEvent.ACTION_UP) downTime = -1;
@@ -147,7 +136,6 @@ public abstract class GlobalTouchListener {
             } finally {
                 process.destroy();
             }
-
         }
 
         private Point normalizeScreenPosition(Point pos) {
