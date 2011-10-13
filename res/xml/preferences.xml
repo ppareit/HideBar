@@ -13,6 +13,14 @@
             android:title="@string/runatboot_label"
             android:summary="@string/runatboot_summary"
             android:defaultValue="true" />
+        <ListPreference
+            android:key="showbar_method_preference"
+            android:title="@string/showbar_method_label"
+            android:summary="@string/showbar_method_summary"
+            android:dialogTitle="@string/showbar_method_label"
+            android:entries="@array/showbar_method_entries"
+            android:entryValues="@array/showbar_method_values"
+            android:defaultValue="BOTTOM_TOUCH" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/extra_label">

@@ -19,6 +19,23 @@
     </string>
 
     <string
+        name="showbar_method_label">
+        Method to show the statusbar...
+    </string>
+
+    <string
+        name="showbar_method_summary">
+        Choose the method for showing the statusbar when it is hidden.
+    </string>
+
+    <string
+        name="showbar_method_none_warning">
+        Once you hide the statusbar it will not be possible to show the statusbar again,
+        unless you disable the service in this preference screen. So be very careful with
+        this option.
+    </string>
+
+    <string
         name="extra_label">Extra</string>
 
     <string

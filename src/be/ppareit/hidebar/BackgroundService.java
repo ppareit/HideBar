@@ -62,22 +62,28 @@ public class BackgroundService extends Service {
             // we received the intent to hide the statusbar
             showBar(false);
 
-            // make a touch listener, on correct touch we show the statusbar and stop
-            swipeUpTouchListener = new GlobalTouchListener(BackgroundService.this) {
-                @Override
-                public void onTouchEvent(MotionEvent event) {
-                    if (event.getAction() != MotionEvent.ACTION_DOWN) return;
-                    WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
-                    Display display = wm.getDefaultDisplay();
-                    if (event.getY() > display.getHeight() - 20) {
-                        Log.v(TAG, "Swipe Up detected");
-                        showBar(true);
-                        stopListening();
-                        swipeUpTouchListener = null;
+            switch (HideBarPreferences.methodToShowBar(context)) {
+            case BOTTOM_TOUCH:
+                // make a touch listener, on correct touch we show the statusbar and stop
+                swipeUpTouchListener = new GlobalTouchListener(BackgroundService.this) {
+                    @Override
+                    public void onTouchEvent(MotionEvent event) {
+                        if (event.getAction() != MotionEvent.ACTION_DOWN) return;
+                        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+                        Display display = wm.getDefaultDisplay();
+                        if (event.getY() > display.getHeight() - 20) {
+                            Log.v(TAG, "Swipe Up detected");
+                            showBar(true);
+                            stopListening();
+                            swipeUpTouchListener = null;
+                        }
                     }
-                }
-            };
-            swipeUpTouchListener.startListening();
+                };
+                swipeUpTouchListener.startListening();
+                break;
+            case NONE:
+                break;
+            }
         }
     }
 

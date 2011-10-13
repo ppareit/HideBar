@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string-array name="showbar_method_entries">
+        <item>Touch bottom of screen</item>
+        <item>None -- also known as kiosk mode</item>
+    </string-array>
+    
+    <string-array name="showbar_method_values">
+        <item>BOTTOM_TOUCH</item>
+        <item>NONE</item>
+    </string-array>
+    
+</resources>

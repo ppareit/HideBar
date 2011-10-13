@@ -21,6 +21,7 @@ package be.ppareit.hidebar;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -29,6 +30,7 @@ import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.util.Log;
+import android.widget.Toast;
 
 
 /**
@@ -69,6 +71,24 @@ public class HideBarPreferences extends PreferenceActivity {
             }
         });
 
+        final Preference showMethodPreference = findPreference("showbar_method_preference");
+        showMethodPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                if (newValue.equals("NONE")) {
+                    Resources res = getResources();
+                    Toast.makeText(getApplicationContext(),
+                            res.getText(R.string.showbar_method_none_warning),
+                            Toast.LENGTH_LONG).show();
+                }
+                if (shouldServiceRun()) {
+                    BackgroundService.stop(getApplicationContext());
+                    BackgroundService.start(getApplicationContext());
+                }
+                return true;
+            }
+        });
+
         final Preference aboutPreference = findPreference("about_preference");
         aboutPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
@@ -95,6 +115,23 @@ public class HideBarPreferences extends PreferenceActivity {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         return sp.getBoolean("runatboot_preference", true) &&
             sp.getBoolean("shouldrun_preference", true);
+    }
+
+    public enum ShowMethod {
+        NONE,
+        BOTTOM_TOUCH,
+    }
+
+    static public ShowMethod methodToShowBar(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        String method = sp.getString("showbar_method_preference", "BOTTOM_TOUCH");
+        if (method.equals("BOTTOM_TOUCH")) {
+            return ShowMethod.BOTTOM_TOUCH;
+        } else if (method.equals("NONE")) {
+            return ShowMethod.NONE;
+        }
+        assert false : "Unreachable";
+        return null;
     }
 }
 
