@@ -39,7 +39,7 @@ public class BackgroundService extends Service {
     static final String HIDE_ACTION = "be.ppareit.hidebar.HIDE_ACTION";
     static private Intent intent = null;
 
-    private GlobalTouchListener swipeUpTouchListener = null;
+    private GlobalTouchListener touchListener = null;
 
     /**
      * Only instantiate class using this method!
@@ -65,7 +65,7 @@ public class BackgroundService extends Service {
             switch (HideBarPreferences.methodToShowBar(context)) {
             case BOTTOM_TOUCH:
                 // make a touch listener, on correct touch we show the statusbar and stop
-                swipeUpTouchListener = new GlobalTouchListener(BackgroundService.this) {
+                touchListener = new GlobalTouchListener(BackgroundService.this) {
                     @Override
                     public void onTouchEvent(MotionEvent event) {
                         if (event.getAction() != MotionEvent.ACTION_DOWN) return;
@@ -75,11 +75,11 @@ public class BackgroundService extends Service {
                             Log.v(TAG, "Swipe Up detected");
                             showBar(true);
                             stopListening();
-                            swipeUpTouchListener = null;
+                            touchListener = null;
                         }
                     }
                 };
-                swipeUpTouchListener.startListening();
+                touchListener.startListening();
                 break;
             case NONE:
                 break;
@@ -124,9 +124,9 @@ public class BackgroundService extends Service {
         showBar(true);
 
         // also stop listening to the swipe up events
-        if (swipeUpTouchListener != null) {
-            swipeUpTouchListener.stopListening();
-            swipeUpTouchListener = null;
+        if (touchListener != null) {
+            touchListener.stopListening();
+            touchListener = null;
         }
     }
 
