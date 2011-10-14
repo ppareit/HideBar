@@ -125,13 +125,7 @@ public class HideBarPreferences extends PreferenceActivity {
     static public ShowMethod methodToShowBar(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         String method = sp.getString("showbar_method_preference", "BOTTOM_TOUCH");
-        if (method.equals("BOTTOM_TOUCH")) {
-            return ShowMethod.BOTTOM_TOUCH;
-        } else if (method.equals("NONE")) {
-            return ShowMethod.NONE;
-        }
-        assert false : "Unreachable";
-        return null;
+        return ShowMethod.valueOf(method);
     }
 }
 
