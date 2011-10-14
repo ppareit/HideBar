@@ -63,7 +63,7 @@ public class BackgroundService extends Service {
             showBar(false);
 
             switch (HideBarPreferences.methodToShowBar(context)) {
-            case BOTTOM_TOUCH:
+            case BOTTOM_TOUCH: {
                 // make a touch listener, on correct touch we show the statusbar and stop
                 touchListener = new GlobalTouchListener(BackgroundService.this) {
                     @Override
@@ -81,6 +81,34 @@ public class BackgroundService extends Service {
                 };
                 touchListener.startListening();
                 break;
+            }
+            case BOTTOM_TOP_TOUCH: {
+                touchListener = new GlobalTouchListener(BackgroundService.this) {
+                    // as long as these two are initial different, 47 is just random number
+                    long bottomTime = -47;
+                    long topTime = 47;
+                    @Override
+                    public void onTouchEvent(MotionEvent event) {
+                        if (event.getAction() != MotionEvent.ACTION_DOWN) return;
+                        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+                        Display display = wm.getDefaultDisplay();
+                        if (event.getY() > display.getHeight() - 20) {
+                            bottomTime = event.getEventTime();
+                        } else if (event.getY() < 20) {
+                            topTime = event.getEventTime();
+                        }
+                        if (Math.abs(bottomTime - topTime) < 5) {
+                            // top and bottom touch close in time
+                            showBar(true);
+                            stopListening();
+                            touchListener = null;
+                        }
+                    }
+                };
+                touchListener.startListening();
+                break;
+
+            }
             case NONE:
                 break;
             }
