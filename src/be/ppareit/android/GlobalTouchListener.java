@@ -95,7 +95,8 @@ public abstract class GlobalTouchListener {
                         String device = line.split("\"")[1];
                         Log.v(TAG, "Possible device: " + device);
                         if (!device.equals("atmel-maxtouch") && !device.equals("it7260")
-                                && !device.equals("qtouch-touchscreen"))
+                                && !device.equals("qtouch-touchscreen")
+                                && !device.equals("egalax_i2c"))
                             continue;
                         deviceFile = testDeviceFile;
                         if (device.equals("qtouch-touchscreen"))
@@ -112,7 +113,7 @@ public abstract class GlobalTouchListener {
                             pos.y = val;
                         } else if (key.equals("0030")) {
                             // pressure (I guess)
-                            if (val > 2) {
+                            if (val > 0) {
                                 action = MotionEvent.ACTION_DOWN;
                                 if (downTime == -1) downTime = SystemClock.uptimeMillis();
                             } else {
