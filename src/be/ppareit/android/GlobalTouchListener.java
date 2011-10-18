@@ -52,8 +52,6 @@ public abstract class GlobalTouchListener {
     Thread touchEventThread = null;
     volatile boolean keepGettingTouchEvents = false;
 
-    boolean inverted = false;
-
     public GlobalTouchListener(Context context) {
         this.display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
         .getDefaultDisplay();
@@ -99,8 +97,6 @@ public abstract class GlobalTouchListener {
                                 && !device.equals("egalax_i2c"))
                             continue;
                         deviceFile = testDeviceFile;
-                        if (device.equals("qtouch-touchscreen"))
-                            inverted = true;
                     } else if (line.startsWith(deviceFile + ": 0003 ")) {
                         // this is touch
                         gaveTouch = false; // not yet given the touch event
@@ -146,18 +142,6 @@ public abstract class GlobalTouchListener {
 
         private Point normalizeScreenPosition(Point pos) {
             int rotation = display.getRotation();
-            /*
-            if (inverted) {
-                switch (rotation) {
-                case Surface.ROTATION_180:
-                    rotation = Surface.ROTATION_0;
-                    break;
-                case Surface.ROTATION_270:
-                    rotation = Surface.ROTATION_90;
-                    break;
-                }
-            }
-            */
             switch (rotation) {
             case Surface.ROTATION_0:
                 //Log.v(TAG, "ROTATION_0 " + pos.x + " " + pos.y);
