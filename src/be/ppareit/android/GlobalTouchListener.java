@@ -82,15 +82,15 @@ public abstract class GlobalTouchListener {
                 // /dev/input/event?: 0000 0002 00000000
                 boolean gaveTouch = false;
                 while (keepGettingTouchEvents) {
-                    String line = stdout.readLine();
+                    final String line = stdout.readLine();
                     if (line.startsWith("add device")) {
                         // the output enumerates all devices, we want all touch input so
                         // look for that device, currently I only know atmel-maxtouch but
                         // more might be needed, thus adding new devices is probably here
                         // TODO: it is possible to do the device registering outside loop
-                        String testDeviceFile = line.split(": ")[1];
-                        line = readLineAndCheckStart(stdout, "  name:     \"");
-                        String device = line.split("\"")[1];
+                        final String testDeviceFile = line.split(": ")[1];
+                        final String line2 = readLineAndCheckStart(stdout, "  name:     \"");
+                        final String device = line2.split("\"")[1];
                         Log.v(TAG, "Possible device: " + device);
                         if (!device.equals("atmel-maxtouch") && !device.equals("it7260")
                                 && !device.equals("qtouch-touchscreen")
@@ -102,7 +102,7 @@ public abstract class GlobalTouchListener {
                         gaveTouch = false; // not yet given the touch event
                         String components[] = line.split(" ");
                         String key = components[2];
-                        int val = Integer.parseInt(components[3], 16);
+                        final int val = Integer.parseInt(components[3], 16);
                         if (key.equals("0035")) {
                             pos.x = val;
                         } else if (key.equals("0036")) {
