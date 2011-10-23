@@ -94,6 +94,7 @@ public abstract class GlobalTouchListener {
                         Log.v(TAG, "Possible device: " + device);
                         if (!device.equals("atmel-maxtouch") && !device.equals("it7260")
                                 && !device.equals("qtouch-touchscreen")
+                                && !device.equals("sec_touchscreen")
                                 && !device.equals("egalax_i2c"))
                             continue;
                         deviceFile = testDeviceFile;
