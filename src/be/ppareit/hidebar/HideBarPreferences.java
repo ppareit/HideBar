@@ -25,10 +25,10 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -57,6 +57,7 @@ public class HideBarPreferences extends PreferenceActivity {
             (CheckBoxPreference) findPreference("shouldrun_preference");
         final CheckBoxPreference runatbootPref =
             (CheckBoxPreference) findPreference("runatboot_preference");
+        runatbootPref.setEnabled(shouldServiceRun());
         shouldrunPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
