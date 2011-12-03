@@ -9,7 +9,7 @@ public class StartupReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (HideBarPreferences.shouldServiceRunAtBoot(context)) {
-            BackgroundService.start(context);
+            BackgroundService.start(context, true);
         }
     }
 

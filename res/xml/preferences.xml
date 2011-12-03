@@ -13,6 +13,11 @@
             android:title="@string/runatboot_label"
             android:summary="@string/runatboot_summary"
             android:defaultValue="true" />
+        <CheckBoxPreference
+            android:key="hideatboot_preference"
+            android:title="@string/hideatboot_label"
+            android:summary="@string/hideatboot_summary"
+            android:defaultValue="false" />
         <ListPreference
             android:key="showbar_method_preference"
             android:title="@string/showbar_method_label"

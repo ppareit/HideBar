@@ -58,16 +58,28 @@ public class HideBarPreferences extends PreferenceActivity {
         final CheckBoxPreference runatbootPref =
             (CheckBoxPreference) findPreference("runatboot_preference");
         runatbootPref.setEnabled(shouldServiceRun());
+        final CheckBoxPreference hideatbootPref =
+            (CheckBoxPreference) findPreference("hideatboot_preference");
+        hideatbootPref.setEnabled(shouldServiceRunAtBoot(this));
         shouldrunPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if ((Boolean) newValue) {
-                    BackgroundService.start(getApplicationContext());
-                    runatbootPref.setEnabled(true);
+                boolean shouldrun = (Boolean) newValue;
+                Context context = getApplicationContext();
+                if (shouldrun) {
+                    BackgroundService.start(context, false);
                 } else {
-                    BackgroundService.stop(getApplicationContext());
-                    runatbootPref.setEnabled(false);
+                    BackgroundService.stop(context);
                 }
+                runatbootPref.setEnabled(shouldrun);
+                hideatbootPref.setEnabled(runatbootPref.isEnabled() && runatbootPref.isChecked());
+                return true;
+            }
+        });
+        runatbootPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                hideatbootPref.setEnabled((Boolean) newValue);
                 return true;
             }
         });
@@ -84,7 +96,7 @@ public class HideBarPreferences extends PreferenceActivity {
                 }
                 if (shouldServiceRun()) {
                     BackgroundService.stop(getApplicationContext());
-                    BackgroundService.start(getApplicationContext());
+                    BackgroundService.start(getApplicationContext(), false);
                 }
                 return true;
             }
@@ -103,7 +115,7 @@ public class HideBarPreferences extends PreferenceActivity {
         });
 
         if (shouldServiceRun()) {
-            BackgroundService.start(getApplicationContext());
+            BackgroundService.start(getApplicationContext(), false);
         }
     }
 
@@ -116,6 +128,13 @@ public class HideBarPreferences extends PreferenceActivity {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         return sp.getBoolean("runatboot_preference", true) &&
             sp.getBoolean("shouldrun_preference", true);
+    }
+
+    static public boolean shouldStatusbarHideAtBoot(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getBoolean("runatboot_preference", true) &&
+            sp.getBoolean("shouldrun_preference", true) &&
+            sp.getBoolean("hideatboot_preference", false);
     }
 
     public enum ShowMethod {

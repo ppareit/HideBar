@@ -19,6 +19,12 @@
     </string>
 
     <string
+        name="hideatboot_label">Hide the statusbar at boot</string>
+    <string
+        name="hideatboot_summary">This will automatically hide the statusbar at boot.
+    </string>
+
+    <string
         name="showbar_method_label">
         Method to show the statusbar...
     </string>

@@ -21,6 +21,7 @@ package be.ppareit.hidebar;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.PendingIntent.CanceledException;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -39,14 +40,17 @@ public class BackgroundService extends Service {
     static final String HIDE_ACTION = "be.ppareit.hidebar.HIDE_ACTION";
     static private Intent intent = null;
 
-    HideReceiver hideReceiver = null;
+    private static boolean startupbyboot = false;
+
+    private HideReceiver hideReceiver = null;
 
     private GlobalTouchListener touchListener = null;
 
     /**
      * Only instantiate class using this method!
      */
-    static public void start(Context context) {
+    static public void start(Context context, boolean startupbyboot) {
+        BackgroundService.startupbyboot = startupbyboot;
         intent = new Intent(context, BackgroundService.class);
         context.startService(intent);
     }
@@ -129,6 +133,16 @@ public class BackgroundService extends Service {
         registerReceiver(hideReceiver, new IntentFilter(HIDE_ACTION));
         Intent hideBarIntent = new Intent(HIDE_ACTION);
         PendingIntent pi = PendingIntent.getBroadcast(this, 0, hideBarIntent, 0);
+
+        // if started up from boot, maybe hide the statusbar
+        if (startupbyboot && HideBarPreferences.shouldStatusbarHideAtBoot(this)) {
+            try {
+                pi.send();
+            } catch (CanceledException e) {
+                e.printStackTrace();
+            }
+        }
+        startupbyboot = false;
 
         // create the notification used to start the intent to hide the statusbar
         NotificationManager nm =
