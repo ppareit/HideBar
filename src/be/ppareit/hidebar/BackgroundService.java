@@ -39,6 +39,8 @@ public class BackgroundService extends Service {
     static final String HIDE_ACTION = "be.ppareit.hidebar.HIDE_ACTION";
     static private Intent intent = null;
 
+    HideReceiver hideReceiver = null;
+
     private GlobalTouchListener touchListener = null;
 
     /**
@@ -123,7 +125,8 @@ public class BackgroundService extends Service {
         showBar(true);
 
         // create the intent that can hide the statusbar
-        registerReceiver(new HideReceiver(), new IntentFilter(HIDE_ACTION));
+        hideReceiver = new HideReceiver();
+        registerReceiver(hideReceiver, new IntentFilter(HIDE_ACTION));
         Intent hideBarIntent = new Intent(HIDE_ACTION);
         PendingIntent pi = PendingIntent.getBroadcast(this, 0, hideBarIntent, 0);
 
@@ -147,6 +150,8 @@ public class BackgroundService extends Service {
         NotificationManager nm =
             (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         nm.cancelAll();
+
+        unregisterReceiver(hideReceiver);
 
         // we where asked to stop running, so make sure the user gets back his status bar
         showBar(true);
