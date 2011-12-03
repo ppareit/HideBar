@@ -46,8 +46,6 @@ public abstract class GlobalTouchListener {
     // display needed to normalize coordinates depending on rotation
     private final Display display;
 
-    private final Context context;
-
     // the touch events are received in a separate thread
     Thread touchEventThread = null;
     volatile boolean keepGettingTouchEvents = false;
@@ -55,7 +53,6 @@ public abstract class GlobalTouchListener {
     public GlobalTouchListener(Context context) {
         this.display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
         .getDefaultDisplay();
-        this.context = context;
     }
 
     Runnable getTouchEvents = new Runnable() {
