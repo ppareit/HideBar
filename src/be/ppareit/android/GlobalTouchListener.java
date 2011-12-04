@@ -36,7 +36,7 @@ import android.view.WindowManager;
  * @author ppareit
  *
  * Intercepts all touch events on the screen. No need to have an active view visible. This
- * Requires root access, so only use it if you absolutely have to.
+ * requires root access, so only use it if you absolutely have to.
  *
  */
 public abstract class GlobalTouchListener {
@@ -50,9 +50,14 @@ public abstract class GlobalTouchListener {
     Thread touchEventThread = null;
     volatile boolean keepGettingTouchEvents = false;
 
+    /**
+     * Construct the global touch listener.
+     *
+     * @param context
+     */
     public GlobalTouchListener(Context context) {
-        this.display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
-        .getDefaultDisplay();
+        display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
+                .getDefaultDisplay();
     }
 
     Runnable getTouchEvents = new Runnable() {
@@ -138,26 +143,37 @@ public abstract class GlobalTouchListener {
             }
         }
 
+        /**
+         * Corrects the position on the screen taking into account the orientation of the
+         * device.
+         *
+         * @param pos Absolute coordinates on the screen.
+         * @return Correct coordinates on the screen.
+         */
         private Point normalizeScreenPosition(Point pos) {
             int rotation = display.getRotation();
             switch (rotation) {
             case Surface.ROTATION_0:
-                //Log.v(TAG, "ROTATION_0 " + pos.x + " " + pos.y);
                 return pos;
             case Surface.ROTATION_90:
-                //Log.v(TAG, "ROTATION_90 " + pos.x + " " + pos.y);
                 return new Point(pos.y, display.getHeight() - pos.x);
             case Surface.ROTATION_180:
-                //Log.v(TAG, "ROTATION_180 " + pos.x + " " + pos.y);
                 return new Point(display.getWidth() - pos.x, display.getHeight() - pos.y);
             case Surface.ROTATION_270:
-                //Log.v(TAG, "ROTATION_270 " + pos.x + " " + pos.y);
                 return new Point(display.getWidth() - pos.y, pos.x);
             }
             assert false : "Cannot be reached";
             return null;
         }
 
+        /**
+         * Calls readline on in and checks if the line starts with startsWith.
+         *
+         * @param in The Reader from wich is read.
+         * @param startsWith Line read must start with this.
+         * @return The line read.
+         * @throws IOException When the line does not start with startsWith
+         */
         private String readLineAndCheckStart(BufferedReader in, String startsWith)
         throws IOException {
             String line = in.readLine();
@@ -169,7 +185,7 @@ public abstract class GlobalTouchListener {
     };
 
     /**
-     * Call to start listening to touch events.
+     * Call this to start listening to touch events.
      */
     public void startListening() {
         Log.v(TAG, "startListening");
@@ -180,7 +196,7 @@ public abstract class GlobalTouchListener {
     }
 
     /**
-     * Call to stop listening to touch events.
+     * Call this to stop listening to touch events.
      */
     public void stopListening() {
         Log.v(TAG, "stopListening");
