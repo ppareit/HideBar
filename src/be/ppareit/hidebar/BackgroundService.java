@@ -154,6 +154,7 @@ public class BackgroundService extends Service {
         .setContentIntent(pi)
         .getNotification();
         nm.notify(TAG, 0, notification);
+        startForeground(0, notification);
     }
 
     @Override
@@ -164,6 +165,7 @@ public class BackgroundService extends Service {
         NotificationManager nm =
             (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         nm.cancelAll();
+        stopForeground(true);
 
         unregisterReceiver(hideReceiver);
 
