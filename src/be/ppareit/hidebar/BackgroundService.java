@@ -125,9 +125,6 @@ public class BackgroundService extends Service {
     public void onCreate() {
         Log.v(TAG, "onCreate");
 
-        // TODO: call can be removed, but this is helpfull during development
-        showBar(true);
-
         // create the intent that can hide the statusbar
         hideReceiver = new HideReceiver();
         registerReceiver(hideReceiver, new IntentFilter(HIDE_ACTION));
