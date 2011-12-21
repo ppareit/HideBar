@@ -97,7 +97,8 @@ public abstract class GlobalTouchListener {
                         if (!device.equals("atmel-maxtouch") && !device.equals("it7260")
                                 && !device.equals("qtouch-touchscreen")
                                 && !device.equals("sec_touchscreen")
-                                && !device.equals("egalax_i2c"))
+                                && !device.equals("egalax_i2c")
+                                && !device.equals("mXT224_touchscreen"))
                             continue;
                         deviceFile = testDeviceFile;
                     } else if (line.startsWith(deviceFile + ": 0003 ")) {
