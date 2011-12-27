@@ -26,6 +26,11 @@
             android:entries="@array/showbar_method_entries"
             android:entryValues="@array/showbar_method_values"
             android:defaultValue="BOTTOM_TOUCH" />
+        <CheckBoxPreference 
+            android:key="ghostback_preference"
+            android:title="@string/ghostback_label"
+            android:summary="@string/ghostback_summary"
+            android:defaultValue="false" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/extra_label">

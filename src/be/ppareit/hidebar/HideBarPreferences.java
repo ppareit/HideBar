@@ -148,6 +148,11 @@ public class HideBarPreferences extends PreferenceActivity {
         String method = sp.getString("showbar_method_preference", "BOTTOM_TOUCH");
         return ShowMethod.valueOf(method);
     }
+
+    static public boolean ghostbackButton(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getBoolean("ghostback_preference", false);
+    }
 }
 
 

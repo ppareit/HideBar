@@ -40,6 +40,15 @@
         unless you disable the service in this preference screen. So be very careful with
         this option.
     </string>
+    
+    <string
+        name="ghostback_label">
+        Ghost back button
+    </string>
+    <string
+        name="ghostback_summary">
+        There will be an invisible back button at the lower-left corner of the screen.
+    </string>
 
     <string
         name="extra_label">Extra</string>
