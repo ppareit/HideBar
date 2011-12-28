@@ -170,6 +170,9 @@ public class BackgroundService extends Service {
     public void onCreate() {
         Log.v(TAG, "onCreate");
 
+        // this is a strange call, but this ensures that this service keeps running
+        startService(new Intent(this, BackgroundService.class));
+
         // create the intent that can hide the statusbar
         hideReceiver = new HideReceiver();
         registerReceiver(hideReceiver, new IntentFilter(HIDE_ACTION));
@@ -219,6 +222,9 @@ public class BackgroundService extends Service {
             touchListener.stopListening();
             touchListener = null;
         }
+
+        // we start ourself in onCreate, so here stopSelf
+        stopSelf();
     }
 
     @Override
@@ -238,15 +244,18 @@ public class BackgroundService extends Service {
     protected void showBar(boolean makeVisible) {
         try {
             if (makeVisible) {
+                Log.v(TAG, "showBar will show systembar");
                 Process proc;
                 proc = Runtime.getRuntime().exec(new String[]{
                         "am","startservice","-n","com.android.systemui/.SystemUIService"});
                 proc.waitFor();
                 if (ghostbackTouchListener != null) {
+                    Log.v(TAG, "showBar will stop the ghostback touch listener");
                     ghostbackTouchListener.stopListening();
                     ghostbackTouchListener = null;
                 }
             } else {
+                Log.v(TAG, "showBar will hide the systembar");
                 Process proc = Runtime.getRuntime().exec(new String[]{
                         "su","-c","service call activity 79 s16 com.android.systemui"});
                 proc.waitFor();
