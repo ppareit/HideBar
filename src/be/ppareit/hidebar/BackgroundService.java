@@ -242,6 +242,10 @@ public class BackgroundService extends Service {
                 proc = Runtime.getRuntime().exec(new String[]{
                         "am","startservice","-n","com.android.systemui/.SystemUIService"});
                 proc.waitFor();
+                if (ghostbackTouchListener != null) {
+                    ghostbackTouchListener.stopListening();
+                    ghostbackTouchListener = null;
+                }
             } else {
                 Process proc = Runtime.getRuntime().exec(new String[]{
                         "su","-c","service call activity 79 s16 com.android.systemui"});
