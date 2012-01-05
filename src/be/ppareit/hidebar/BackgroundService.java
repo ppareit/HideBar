@@ -18,8 +18,6 @@
  ******************************************************************************/
 package be.ppareit.hidebar;
 
-import java.io.IOException;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -30,12 +28,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.util.Log;
-import android.view.Display;
-import android.view.MotionEvent;
-import android.view.WindowManager;
-import be.ppareit.android.GlobalTouchListener;
 
 public class BackgroundService extends Service {
 
@@ -46,9 +39,6 @@ public class BackgroundService extends Service {
     private static boolean startupbyboot = false;
 
     private HideReceiver hideReceiver = null;
-
-    private GlobalTouchListener touchListener = null;
-    private GlobalTouchListener ghostbackTouchListener = null;
 
     /**
      * Only instantiate class using this method!
@@ -72,106 +62,15 @@ public class BackgroundService extends Service {
             // we received the intent to hide the statusbar
             showBar(false);
 
-            // start specialized listener, depending on how the systembar should show up
-            switch (HideBarPreferences.methodToShowBar(context)) {
-            case BOTTOM_TOUCH: {
-                // make a touch listener, on correct touch we show the statusbar and stop
-                touchListener = new GlobalTouchListener(BackgroundService.this) {
-                    @Override
-                    public void onTouchEvent(MotionEvent event) {
-                        if (event.getAction() != MotionEvent.ACTION_DOWN) return;
-                        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
-                        Display display = wm.getDefaultDisplay();
-                        if (event.getY() > display.getHeight() - 20) {
-                            Log.v(TAG, "Swipe Up detected");
-                            showBar(true);
-                            stopListening();
-                            touchListener = null;
-                        }
-                    }
-                };
-                touchListener.startListening();
-                break;
-            }
-            case BOTTOM_TOP_TOUCH: {
-                touchListener = new GlobalTouchListener(BackgroundService.this) {
-                    // as long as these two are initial different, 47 is just random number
-                    long bottomTime = -47;
-                    long topTime = 47;
-                    @Override
-                    public void onTouchEvent(MotionEvent event) {
-                        if (event.getAction() != MotionEvent.ACTION_DOWN) return;
-                        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
-                        Display display = wm.getDefaultDisplay();
-                        if (event.getY() > display.getHeight() - 20) {
-                            bottomTime = event.getEventTime();
-                        } else if (event.getY() < 20) {
-                            topTime = event.getEventTime();
-                        }
-                        if (Math.abs(bottomTime - topTime) < 5) {
-                            // top and bottom touch close in time
-                            showBar(true);
-                            stopListening();
-                            touchListener = null;
-                        }
-                    }
-                };
-                touchListener.startListening();
-                break;
+            // start the restore systembar service
+            context.startService(new Intent(context, RestoreSystembarService.class));
 
-            }
-            case NONE:
-                break;
-            }
-
-            // check if the listener for the ghost button should be installed
-            if (HideBarPreferences.ghostbackButton(context)) {
-                Log.v(TAG, "Registering ghostback touch listener");
-                ghostbackTouchListener = new GlobalTouchListener(BackgroundService.this) {
-                    long lastTime = -1;
-                    boolean ignoreOne = false;
-                    @Override
-                    public void onTouchEvent(MotionEvent event) {
-                        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
-                        Display display = wm.getDefaultDisplay();
-                        long currentTime = SystemClock.uptimeMillis();
-                        // only do ghost back in left bottom corner
-                        if (event.getX() > 20 || event.getY() < display.getHeight() - 20)
-                            return;
-                        // only do a ghost back once every 2 seconds
-                        if (lastTime > currentTime - 2000)
-                            return;
-                        // BUG: java process buffers, so lot of events are  received much
-                        // to late, this ignores one event and this helps a lot
-                        if (ignoreOne) {
-                            lastTime = currentTime;
-                            ignoreOne = false;
-                            return;
-                        }
-                        Log.v(TAG, "Executing a ghost back event");
-                        lastTime = currentTime;
-                        ignoreOne = true;
-                        try {
-                            new ProcessBuilder()
-                            .command("su", "-c", "input keyevent 4")
-                            .redirectErrorStream(true)
-                            .start();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                };
-                ghostbackTouchListener.startListening();
-            }
         }
     }
 
     @Override
     public void onCreate() {
         Log.v(TAG, "onCreate");
-
-        // this is a strange call, but this ensures that this service keeps running
-        startService(new Intent(this, BackgroundService.class));
 
         // create the intent that can hide the statusbar
         hideReceiver = new HideReceiver();
@@ -216,23 +115,14 @@ public class BackgroundService extends Service {
 
         // we where asked to stop running, so make sure the user gets back his status bar
         showBar(true);
-
-        // also stop listening to the swipe up events
-        if (touchListener != null) {
-            touchListener.stopListening();
-            touchListener = null;
-        }
-
-        // we start ourself in onCreate, so here stopSelf
-        stopSelf();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v(TAG, "onStartCommand");
 
-        // return sticky, so android will keep our service running
-        return Service.START_STICKY;
+        // we just have to start service once, not keep restarting
+        return Service.START_NOT_STICKY;
     }
 
     @Override
@@ -249,11 +139,6 @@ public class BackgroundService extends Service {
                 proc = Runtime.getRuntime().exec(new String[]{
                         "am","startservice","-n","com.android.systemui/.SystemUIService"});
                 proc.waitFor();
-                if (ghostbackTouchListener != null) {
-                    Log.v(TAG, "showBar will stop the ghostback touch listener");
-                    ghostbackTouchListener.stopListening();
-                    ghostbackTouchListener = null;
-                }
             } else {
                 Log.v(TAG, "showBar will hide the systembar");
                 Process proc = Runtime.getRuntime().exec(new String[]{

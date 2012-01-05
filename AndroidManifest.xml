@@ -28,6 +28,8 @@
             android:label="@string/about_label" />
         <service
             android:name=".BackgroundService" />
+        <service
+            android:name=".RestoreSystembarService" />
         <receiver
             android:name=".StartupReceiver">
             <intent-filter>
