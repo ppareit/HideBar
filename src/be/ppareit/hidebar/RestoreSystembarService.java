@@ -31,7 +31,7 @@ public class RestoreSystembarService extends Service {
                     if (event.getAction() != MotionEvent.ACTION_DOWN) return;
                     WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
                     Display display = wm.getDefaultDisplay();
-                    if (event.getY() > display.getHeight() - 20) {
+                    if (event.getX() > 40 && event.getY() > display.getHeight() - 20) {
                         Log.v(TAG, "Swipe Up detected");
                         showSystembar();
                         RestoreSystembarService.this.stopSelf();
