@@ -70,6 +70,12 @@ public abstract class GlobalTouchListener {
                 .command("su", "-c", "getevent")
                 .redirectErrorStream(true)
                 .start();
+                // TODO: stdout is buffered, and here I use a BufferedReader,
+                // but even if I used something else, it would still buffer the output
+                // of stdout. What is irritating but some touches are then only detected
+                // somewhat later. This seems to be a java/android problem. To solve this
+                // start the process from C code, this way the output can be read
+                // unbuffered. Extra karma points if you can fix this!
                 BufferedReader stdout = new BufferedReader(
                         new InputStreamReader(process.getInputStream()));
                 // keep track when touch started
