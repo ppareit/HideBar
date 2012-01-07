@@ -23,22 +23,17 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.PendingIntent.CanceledException;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.IBinder;
 import android.util.Log;
 
 public class BackgroundService extends Service {
 
     static final String TAG = BackgroundService.class.getSimpleName();
-    static final String HIDE_ACTION = "be.ppareit.hidebar.HIDE_ACTION";
     static private Intent intent = null;
 
     private static boolean startupbyboot = false;
-
-    private HideReceiver hideReceiver = null;
 
     /**
      * Only instantiate class using this method!
@@ -54,29 +49,13 @@ public class BackgroundService extends Service {
         intent = null;
     }
 
-    class HideReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.v(TAG, "HideReceiver.onReceive");
-
-            // we received the intent to hide the statusbar
-            showBar(false);
-
-            // start the restore systembar service
-            context.startService(new Intent(context, RestoreSystembarService.class));
-
-        }
-    }
-
     @Override
     public void onCreate() {
         Log.v(TAG, "onCreate");
 
         // create the intent that can hide the statusbar
-        hideReceiver = new HideReceiver();
-        registerReceiver(hideReceiver, new IntentFilter(HIDE_ACTION));
-        Intent hideBarIntent = new Intent(HIDE_ACTION);
-        PendingIntent pi = PendingIntent.getBroadcast(this, 0, hideBarIntent, 0);
+        Intent hideSystembarIntent = new Intent(this, HideSystembarReceiver.class);
+        PendingIntent pi = PendingIntent.getBroadcast(this, 0, hideSystembarIntent, 0);
 
         // if started up from boot, maybe hide the statusbar
         if (startupbyboot && HideBarPreferences.shouldStatusbarHideAtBoot(this)) {
@@ -111,10 +90,10 @@ public class BackgroundService extends Service {
         nm.cancelAll();
         stopForeground(true);
 
-        unregisterReceiver(hideReceiver);
-
         // we where asked to stop running, so make sure the user gets back his status bar
         showBar(true);
+
+        stopService(new Intent(this, RestoreSystembarService.class));
     }
 
     @Override
