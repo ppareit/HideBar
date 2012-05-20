@@ -110,19 +110,25 @@ public class BackgroundService extends Service {
         return null;
     }
 
-    protected void showBar(boolean makeVisible) {
+    static void showBar(boolean makeVisible) {
         try {
+            // This used to be the following nice calls:
+            // service call activity 79 s16 com.android.systemui
+            // am startservice -n com.android.systemui/.SystemUIService
+            // but now YOU (google engineer) forced me to do such a thing!
             if (makeVisible) {
                 Log.v(TAG, "showBar will show systembar");
-                Process proc;
-                proc = Runtime.getRuntime().exec(new String[]{
-                        "am","startservice","-n","com.android.systemui/.SystemUIService"});
-                proc.waitFor();
+                Process proc1 = Runtime.getRuntime().exec(new String[]{
+                        "su","-c", "rm /sdcard/hidebar-lock"});
+                proc1.waitFor();
+                Runtime.getRuntime().exec(new String[]{
+                        "ps | grep com.android.systemui\nwhile [ \"$?\" == \"1\" ]\ndo\nam startservice -n com.android.systemui/.SystemUIService\nps | grep com.android.systemui\ndone"});
+                // no proc.waitFor();
             } else {
                 Log.v(TAG, "showBar will hide the systembar");
-                Process proc = Runtime.getRuntime().exec(new String[]{
-                        "su","-c","service call activity 79 s16 com.android.systemui"});
-                proc.waitFor();
+                Runtime.getRuntime().exec(new String[]{
+                        "su","-c","touch /sdcard/hidebar-lock\nwhile [ -f /sdcard/hidebar-lock ]\ndo\nkillall com.android.systemui\ndone"});
+                // no proc.waitFor();
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -147,13 +147,7 @@ public class RestoreSystembarService extends Service {
 
     private void showSystembar() {
         Log.v(TAG, "showSystembar");
-        try {
-            Process proc = Runtime.getRuntime().exec(new String[]{
-                    "am","startservice","-n","com.android.systemui/.SystemUIService"});
-            proc.waitFor();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        BackgroundService.showBar(true);
     }
 
     private void sendBackEvent() {

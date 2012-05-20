@@ -38,13 +38,7 @@ public class HideSystembarReceiver extends BroadcastReceiver {
 
     private void hideSystembar() {
         Log.v(TAG, "hideSystembar");
-        try {
-            Process proc = Runtime.getRuntime().exec(new String[]{
-                    "su","-c","service call activity 79 s16 com.android.systemui"});
-            proc.waitFor();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        BackgroundService.showBar(false);
     }
 
 }
