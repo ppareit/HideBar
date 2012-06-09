@@ -118,16 +118,20 @@ public class BackgroundService extends Service {
             // but now YOU (google engineer) forced me to do such a thing!
             if (makeVisible) {
                 Log.v(TAG, "showBar will show systembar");
-                Process proc1 = Runtime.getRuntime().exec(new String[]{
-                        "su","-c", "rm /sdcard/hidebar-lock"});
-                proc1.waitFor();
                 Runtime.getRuntime().exec(new String[]{
-                        "ps | grep com.android.systemui\nwhile [ \"$?\" == \"1\" ]\ndo\nam startservice -n com.android.systemui/.SystemUIService\nps | grep com.android.systemui\ndone"});
-                // no proc.waitFor();
+                        "su","-c", "rm /sdcard/hidebar-lock\n"+
+                                "sleep 5\n"+
+                                "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService"});
             } else {
                 Log.v(TAG, "showBar will hide the systembar");
                 Runtime.getRuntime().exec(new String[]{
-                        "su","-c","touch /sdcard/hidebar-lock\nwhile [ -f /sdcard/hidebar-lock ]\ndo\nkillall com.android.systemui\ndone"});
+                        "su","-c","touch /sdcard/hidebar-lock\n"+
+                                "while [ -f /sdcard/hidebar-lock ]\n"+
+                                "do\n"+
+                                "killall com.android.systemui\n"+
+                                "sleep 1\n"+
+                                "done\n"+
+                                "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService"});
                 // no proc.waitFor();
             }
         } catch (Exception e) {
