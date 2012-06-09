@@ -102,6 +102,19 @@ public class HideBarPreferences extends PreferenceActivity {
             }
         });
 
+        final Preference ghostbackPreference = findPreference("ghostback_preference");
+        ghostbackPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                if (shouldServiceRun()) {
+                    BackgroundService.stop(getApplicationContext());
+                    BackgroundService.start(getApplicationContext(), false);
+                }
+                return true;
+            }
+        });
+
+
         final Preference aboutPreference = findPreference("about_preference");
         aboutPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
