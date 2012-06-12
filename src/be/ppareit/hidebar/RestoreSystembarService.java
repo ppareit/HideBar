@@ -154,7 +154,8 @@ public class RestoreSystembarService extends Service {
         Log.v(TAG, "sendBackEvent");
         try {
             new ProcessBuilder()
-            .command("su", "-c", "input keyevent 4")
+            .command("su", "-c",
+                    "LD_LIBRARY_PATH=/vendor/lib:/system/lib input keyevent 4")
             .redirectErrorStream(true)
             .start();
         } catch (Exception e) {

@@ -31,7 +31,7 @@
             android:title="@string/ghostback_label"
             android:summary="@string/ghostback_summary"
             android:defaultValue="false"
-            android:enabled="false" />
+            android:enabled="true" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/extra_label">
