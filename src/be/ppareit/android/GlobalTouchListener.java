@@ -106,6 +106,7 @@ public abstract class GlobalTouchListener {
                                 && !device.equals("egalax_i2c")
                                 && !device.equals("N-trig Multi Touch")
                                 && !device.equals("melfas_ts")
+                                && !device.equals("kxte9")
                                 && !device.equals("mXT224_touchscreen"))
                             continue;
                         deviceFile = testDeviceFile;
