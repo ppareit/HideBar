@@ -2,13 +2,16 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="be.ppareit.hidebar"
-    android:versionCode="13"
-    android:versionName="1.01">
+    android:versionCode="14"
+    android:versionName="1.2">
     <uses-sdk
         android:minSdkVersion="12" />
 
     <uses-permission
         android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission
+        android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    
 
     <application
         android:icon="@drawable/icon"
