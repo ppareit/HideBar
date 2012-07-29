@@ -47,16 +47,17 @@ public class RestoreSystembarService extends Service {
     public void onCreate() {
         Log.v(TAG, "onCreate");
 
-        // start specialized listener, depending on how the systembar should show up
+        // start specialized listener, depending on how the systembar should
+        // show up
         switch (HideBarPreferences.methodToShowBar(this)) {
         case BOTTOM_TOUCH: {
-            WindowManager wm = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
+            WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
             WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                    LayoutParams.MATCH_PARENT,
-                    LayoutParams.WRAP_CONTENT,
+                    LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT,
                     LayoutParams.TYPE_SYSTEM_ALERT,
-                    LayoutParams.FLAG_NOT_FOCUSABLE|LayoutParams.FLAG_NOT_TOUCH_MODAL|
-                    LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                    LayoutParams.FLAG_NOT_FOCUSABLE
+                            | LayoutParams.FLAG_NOT_TOUCH_MODAL
+                            | LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
                     PixelFormat.OPAQUE);
             params.alpha = 0.0f;
             params.height = 25;
@@ -65,7 +66,8 @@ public class RestoreSystembarService extends Service {
             params.y = 0;
             LinearLayout touchLayout = new LinearLayout(this);
             touchLayout.setBackgroundColor(0x00FFFFFF);
-            touchLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+            touchLayout.setLayoutParams(new LayoutParams(
+                    LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
             if (HideBarPreferences.ghostbackButton(this)) {
                 View backArea = new View(this);
                 backArea.setOnTouchListener(new View.OnTouchListener() {
@@ -94,13 +96,13 @@ public class RestoreSystembarService extends Service {
             break;
         }
         case BOTTOM_TOP_TOUCH: {
-            WindowManager wm = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
+            WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
             WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                    LayoutParams.MATCH_PARENT,
-                    LayoutParams.WRAP_CONTENT,
+                    LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT,
                     LayoutParams.TYPE_SYSTEM_ALERT,
-                    LayoutParams.FLAG_NOT_FOCUSABLE|LayoutParams.FLAG_NOT_TOUCH_MODAL|
-                    LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                    LayoutParams.FLAG_NOT_FOCUSABLE
+                            | LayoutParams.FLAG_NOT_TOUCH_MODAL
+                            | LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
                     PixelFormat.OPAQUE);
             params.alpha = 0.0f;
             params.height = 25;
@@ -109,7 +111,8 @@ public class RestoreSystembarService extends Service {
             params.y = 0;
             LinearLayout bottomLayout = new LinearLayout(this);
             bottomLayout.setBackgroundColor(0x00FFFFFF);
-            bottomLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+            bottomLayout.setLayoutParams(new LayoutParams(
+                    LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
             if (HideBarPreferences.ghostbackButton(this)) {
                 View backArea = new View(this);
                 backArea.setOnTouchListener(new View.OnTouchListener() {
@@ -142,7 +145,8 @@ public class RestoreSystembarService extends Service {
             params.gravity = Gravity.TOP;
             LinearLayout topLayout = new LinearLayout(this);
             topLayout.setBackgroundColor(0x00FFFFFF);
-            topLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+            topLayout.setLayoutParams(new LayoutParams(
+                    LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
             View topArea = new View(this);
             topArea.setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -171,7 +175,7 @@ public class RestoreSystembarService extends Service {
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
-        WindowManager wm = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
+        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         while (!mTouchAreas.isEmpty()) {
             wm.removeView(mTouchAreas.pop());
         }
@@ -199,10 +203,9 @@ public class RestoreSystembarService extends Service {
         Log.v(TAG, "sendBackEvent");
         try {
             new ProcessBuilder()
-            .command("su", "-c",
-                    "LD_LIBRARY_PATH=/vendor/lib:/system/lib input keyevent 4")
-            .redirectErrorStream(true)
-            .start();
+                    .command("su", "-c",
+                            "LD_LIBRARY_PATH=/vendor/lib:/system/lib input keyevent 4")
+                    .redirectErrorStream(true).start();
         } catch (Exception e) {
             e.printStackTrace();
         }
