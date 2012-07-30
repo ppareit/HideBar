@@ -1,45 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="be.ppareit.hidebar"
     android:versionCode="14"
-    android:versionName="1.2">
-    <uses-sdk
-        android:minSdkVersion="12" />
+    android:versionName="1.2" >
 
-    <uses-permission
-        android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission
-        android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    
+    <uses-sdk android:minSdkVersion="12" />
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:icon="@drawable/icon"
-        android:label="@string/app_name">
+        android:label="@string/app_name" >
         <activity
             android:name=".HideBarPreferences"
-            android:label="@string/app_name">
+            android:label="@string/app_name" >
             <intent-filter>
-                <action
-                    android:name="android.intent.action.MAIN" />
-                <category
-                    android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".AboutActivity"
             android:label="@string/about_label" />
-        <service
-            android:name=".BackgroundService" />
-        <service
-            android:name=".RestoreSystembarService" />
-        <receiver 
-            android:name=".HideSystembarReceiver" />
-        <receiver
-            android:name=".StartupReceiver">
+
+        <service android:name=".BackgroundService" />
+        <service android:name=".RestoreSystembarService" />
+
+        <receiver android:name=".HideSystembarReceiver" />
+        <receiver android:name=".StartupReceiver" >
             <intent-filter>
-                <action
-                    android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
     </application>
