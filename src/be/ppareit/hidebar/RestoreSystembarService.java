@@ -20,10 +20,16 @@ package be.ppareit.hidebar;
 
 import java.util.LinkedList;
 
+import be.ppareit.hidebar.Constants.MarketType;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.net.Uri;
+import android.opengl.Visibility;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.util.Log;
@@ -32,8 +38,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+/**
+ * This service is responsible to restore the system bar
+ */
 public class RestoreSystembarService extends Service {
 
     static final String TAG = RestoreSystembarService.class.getSimpleName();
@@ -170,6 +180,69 @@ public class RestoreSystembarService extends Service {
             break;
         }
 
+        if (Constants.MARKETTYPE == MarketType.DEMO) {
+            Log.i(TAG, "Adding the demo area");
+            WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+            WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                    LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT,
+                    LayoutParams.TYPE_SYSTEM_ALERT,
+                    LayoutParams.FLAG_NOT_FOCUSABLE
+                            | LayoutParams.FLAG_NOT_TOUCH_MODAL
+                            | LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                    PixelFormat.OPAQUE);
+            params.alpha = 1.0f;
+            params.x = 30;
+            params.y = 30;
+            params.height = 45;
+            params.width = 135;
+            params.gravity = Gravity.BOTTOM | Gravity.RIGHT;
+            LinearLayout layout = new LinearLayout(this);
+            layout.setBackgroundColor(0x00FF0000);
+            layout.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
+                    LayoutParams.WRAP_CONTENT));
+            ImageView demoArea = new ImageView(this);
+            demoArea.setBackgroundColor(Color.YELLOW);
+            demoArea.setImageResource(R.drawable.hidebar_demo_button);
+            demoArea.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    Log.d(TAG, "Demo Area touched");
+                    v.setVisibility(View.GONE);
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setData(Uri.parse("market://details?id=be.ppareit.hidebar"));
+                    startActivity(intent);
+                    return false;
+                }
+            });
+            layout.addView(demoArea, 135, 45);
+            wm.addView(layout, params);
+            mTouchAreas.add(layout);
+            new HideDemoButtonTask().execute(layout);
+        }
+    }
+
+    /**
+     * Hide the demo button after a short while
+     */
+    private class HideDemoButtonTask extends AsyncTask<View, Void, Void> {
+        View mDemoButton = null;
+
+        @Override
+        protected Void doInBackground(View... params) {
+            mDemoButton = params[0];
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            mDemoButton.setVisibility(View.GONE);
+        }
     }
 
     @Override
