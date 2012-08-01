@@ -31,22 +31,26 @@ import android.util.Log;
 public class BackgroundService extends Service {
 
     static final String TAG = BackgroundService.class.getSimpleName();
-    static private Intent intent = null;
 
-    private static boolean startupbyboot = false;
+    static private Context sContext = null;
+    static private Intent sIntent = null;
+
+    private static boolean sStartupByBoot = false;
 
     /**
      * Only instantiate class using this method!
      */
     static public void start(Context context, boolean startupbyboot) {
-        BackgroundService.startupbyboot = startupbyboot;
-        intent = new Intent(context, BackgroundService.class);
-        context.startService(intent);
+        BackgroundService.sStartupByBoot = startupbyboot;
+        sIntent = new Intent(context, BackgroundService.class);
+        context.startService(sIntent);
+        sContext = context;
     }
 
     static public void stop(Context context) {
-        context.stopService(intent);
-        intent = null;
+        context.stopService(sIntent);
+        sIntent = null;
+        sContext = null;
     }
 
     @Override
@@ -58,14 +62,14 @@ public class BackgroundService extends Service {
         PendingIntent pi = PendingIntent.getBroadcast(this, 0, hideSystembarIntent, 0);
 
         // if started up from boot, maybe hide the statusbar
-        if (startupbyboot && HideBarPreferences.shouldStatusbarHideAtBoot(this)) {
+        if (sStartupByBoot && HideBarPreferences.shouldStatusbarHideAtBoot(this)) {
             try {
                 pi.send();
             } catch (CanceledException e) {
                 e.printStackTrace();
             }
         }
-        startupbyboot = false;
+        sStartupByBoot = false;
 
         // create the notification used to start the intent to hide the
         // statusbar
@@ -123,6 +127,7 @@ public class BackgroundService extends Service {
                                 "rm /sdcard/hidebar-lock\n"
                                         + "sleep 5\n"
                                         + "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService" });
+                sContext.sendBroadcast(new Intent(Constants.ACTION_BARHIDDEN));
             } else {
                 Log.v(TAG, "showBar will hide the systembar");
                 Runtime.getRuntime()
@@ -137,6 +142,7 @@ public class BackgroundService extends Service {
                                         + "done\n"
                                         + "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService" });
                 // no proc.waitFor();
+                sContext.sendBroadcast(new Intent(Constants.ACTION_BARSHOWN));
             }
         } catch (Exception e) {
             e.printStackTrace();

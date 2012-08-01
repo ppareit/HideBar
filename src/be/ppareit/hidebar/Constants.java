@@ -8,4 +8,7 @@ public class Constants {
     }
 
     static final MarketType MARKETTYPE = MarketType.DEMO;
+
+    static final String ACTION_BARHIDDEN = "be.ppareit.hidebar.ACTION_BARHIDDEN";
+    static final String ACTION_BARSHOWN = "be.ppareit.hidebar.ACTION_BARSHOWN";
 }
