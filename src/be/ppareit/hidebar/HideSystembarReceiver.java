@@ -23,6 +23,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+/**
+ * When this receiver is called, it will hide the systembar and start the
+ * service to detect when to redisplay the systembar. This class can be used for
+ * instance in a notification.
+ */
 public class HideSystembarReceiver extends BroadcastReceiver {
 
     private static final String TAG = HideSystembarReceiver.class.getSimpleName();
@@ -31,14 +36,8 @@ public class HideSystembarReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.v(TAG, "onReceive");
         // we received the intent to hide the statusbar
-        hideSystembar();
+        BackgroundService.showBar(false);
         // start the restore systembar service
         context.startService(new Intent(context, RestoreSystembarService.class));
     }
-
-    private void hideSystembar() {
-        Log.v(TAG, "hideSystembar");
-        BackgroundService.showBar(false);
-    }
-
 }
