@@ -67,15 +67,13 @@ public class BackgroundService extends Service {
         }
         startupbyboot = false;
 
-        // create the notification used to start the intent to hide the statusbar
-        NotificationManager nm =
-            (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        // create the notification used to start the intent to hide the
+        // statusbar
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Notification notification = new Notification.Builder(this)
-        .setContentTitle(getResources().getText(R.string.hidebar_notification))
-        .setSmallIcon(R.drawable.ic_icon_hidebar)
-        .setOngoing(true)
-        .setContentIntent(pi)
-        .getNotification();
+                .setContentTitle(getResources().getText(R.string.hidebar_notification))
+                .setSmallIcon(R.drawable.ic_icon_hidebar).setOngoing(true)
+                .setContentIntent(pi).getNotification();
         nm.notify(TAG, 0, notification);
         startForeground(0, notification);
     }
@@ -85,12 +83,12 @@ public class BackgroundService extends Service {
         Log.v(TAG, "onDestroy");
 
         // remove the notification
-        NotificationManager nm =
-            (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         nm.cancelAll();
         stopForeground(true);
 
-        // we where asked to stop running, so make sure the user gets back his status bar
+        // we where asked to stop running, so make sure the user gets back his
+        // status bar
         showBar(true);
 
         stopService(new Intent(this, RestoreSystembarService.class));
@@ -118,20 +116,26 @@ public class BackgroundService extends Service {
             // but now YOU (google engineer) forced me to do such a thing!
             if (makeVisible) {
                 Log.v(TAG, "showBar will show systembar");
-                Runtime.getRuntime().exec(new String[]{
-                        "su","-c", "rm /sdcard/hidebar-lock\n"+
-                                "sleep 5\n"+
-                                "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService"});
+                Runtime.getRuntime()
+                        .exec(new String[] {
+                                "su",
+                                "-c",
+                                "rm /sdcard/hidebar-lock\n"
+                                        + "sleep 5\n"
+                                        + "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService" });
             } else {
                 Log.v(TAG, "showBar will hide the systembar");
-                Runtime.getRuntime().exec(new String[]{
-                        "su","-c","touch /sdcard/hidebar-lock\n"+
-                                "while [ -f /sdcard/hidebar-lock ]\n"+
-                                "do\n"+
-                                "killall com.android.systemui\n"+
-                                "sleep 1\n"+
-                                "done\n"+
-                                "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService"});
+                Runtime.getRuntime()
+                        .exec(new String[] {
+                                "su",
+                                "-c",
+                                "touch /sdcard/hidebar-lock\n"
+                                        + "while [ -f /sdcard/hidebar-lock ]\n"
+                                        + "do\n"
+                                        + "killall com.android.systemui\n"
+                                        + "sleep 1\n"
+                                        + "done\n"
+                                        + "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService" });
                 // no proc.waitFor();
             }
         } catch (Exception e) {
