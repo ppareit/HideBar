@@ -34,6 +34,16 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <service android:name=".DemoService" />
+
+        <receiver
+            android:name=".DemoService$BarHiddenReceiver"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="be.ppareit.hidebar.ACTION_BARHIDDEN" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
