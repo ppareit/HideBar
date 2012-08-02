@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -23,6 +24,7 @@ public class DemoService extends Service {
     static final String TAG = DemoService.class.getSimpleName();
 
     LinearLayout mDemoButton = null;
+    BarShownReceiver mBarShownReceiver = null;
 
     public static class BarHiddenReceiver extends BroadcastReceiver {
 
@@ -36,6 +38,20 @@ public class DemoService extends Service {
 
     }
 
+    /**
+     * When we receive that the bar is shown again, we stop this service so that
+     * that the notification that we are running the demo version is removed
+     */
+    private class BarShownReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.v(TAG, "onReceive broadcast: " + intent.getAction());
+            stopSelf();
+        }
+
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -43,6 +59,10 @@ public class DemoService extends Service {
 
     @Override
     public void onDestroy() {
+        if (mBarShownReceiver != null) {
+            unregisterReceiver(mBarShownReceiver);
+            mBarShownReceiver = null;
+        }
         if (mDemoButton != null) {
             WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
             wm.removeView(mDemoButton);
@@ -94,6 +114,11 @@ public class DemoService extends Service {
         mDemoButton.addView(demoArea, 135, 45);
         wm.addView(mDemoButton, params);
         new HideDemoButtonTask().execute();
+        // start listening for the broadcast that the bar is reshow
+        mBarShownReceiver = new BarShownReceiver();
+        IntentFilter barShownIntentFilter = new IntentFilter(Constants.ACTION_BARSHOWN);
+        registerReceiver(mBarShownReceiver, barShownIntentFilter);
+        // if android kills this service, there is no need to be restarted
         return START_NOT_STICKY;
     }
 
