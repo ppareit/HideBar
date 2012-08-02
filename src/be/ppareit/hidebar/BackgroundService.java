@@ -18,6 +18,9 @@
  ******************************************************************************/
 package be.ppareit.hidebar;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -113,23 +116,35 @@ public class BackgroundService extends Service {
     }
 
     static void showBar(boolean makeVisible) {
+        // This used to be the following nice calls:
+        // service call activity 79 s16 com.android.systemui
+        // am startservice -n com.android.systemui/.SystemUIService
+        // but now YOU (google engineer) forced me to do such a thing!
         try {
-            // This used to be the following nice calls:
-            // service call activity 79 s16 com.android.systemui
-            // am startservice -n com.android.systemui/.SystemUIService
-            // but now YOU (google engineer) forced me to do such a thing!
+            // get the existing environment
+            ArrayList<String> envlist = new ArrayList<String>();
+            Map<String, String> env = System.getenv();
+            for (String envName : env.keySet()) {
+                envlist.add(envName + "=" + env.get(envName));
+            }
+            String[] envp = (String[]) envlist.toArray(new String[0]);
+            // depending on makeVisible, show or hide the bar
             if (makeVisible) {
                 Log.v(TAG, "showBar will show systembar");
+                // execute in correct environment
                 Runtime.getRuntime()
                         .exec(new String[] {
                                 "su",
                                 "-c",
                                 "rm /sdcard/hidebar-lock\n"
                                         + "sleep 5\n"
-                                        + "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService" });
+                                        + "am startservice -n com.android.systemui/.SystemUIService" },
+                                envp);
+                // no proc.waitFor();
                 sContext.sendBroadcast(new Intent(Constants.ACTION_BARSHOWN));
             } else {
                 Log.v(TAG, "showBar will hide the systembar");
+                // execute in correct environment
                 Runtime.getRuntime()
                         .exec(new String[] {
                                 "su",
@@ -140,7 +155,8 @@ public class BackgroundService extends Service {
                                         + "killall com.android.systemui\n"
                                         + "sleep 1\n"
                                         + "done\n"
-                                        + "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService" });
+                                        + "am startservice -n com.android.systemui/.SystemUIService" },
+                                envp);
                 // no proc.waitFor();
                 sContext.sendBroadcast(new Intent(Constants.ACTION_BARHIDDEN));
             }
