@@ -5,10 +5,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -122,6 +124,8 @@ public class DemoService extends Service {
         mBarShownReceiver = new BarShownReceiver();
         IntentFilter barShownIntentFilter = new IntentFilter(Constants.ACTION_BARSHOWN);
         registerReceiver(mBarShownReceiver, barShownIntentFilter);
+        // for each time the bar is hidden, increment the demo startups
+        incrNumberOfDemoStartups(getApplicationContext());
         // if android kills this service, there is no need to be restarted
         return START_NOT_STICKY;
     }
@@ -134,7 +138,8 @@ public class DemoService extends Service {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                Thread.sleep(10000);
+                long time = 10000 + 1000 * numberOfDemoStartups(getApplicationContext());
+                Thread.sleep(time);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -150,6 +155,19 @@ public class DemoService extends Service {
     @Override
     public IBinder onBind(Intent arg0) {
         return null;
+    }
+
+    private static int numberOfDemoStartups(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getInt("number_of_demo_startups", 0);
+    }
+
+    private static void incrNumberOfDemoStartups(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor edit = sp.edit();
+        edit.putInt("number_of_demo_startups",
+                sp.getInt("number_of_demo_startups", 0) + 1);
+        edit.apply();
     }
 
 }
