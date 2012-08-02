@@ -127,7 +127,7 @@ public class BackgroundService extends Service {
                                 "rm /sdcard/hidebar-lock\n"
                                         + "sleep 5\n"
                                         + "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService" });
-                sContext.sendBroadcast(new Intent(Constants.ACTION_BARHIDDEN));
+                sContext.sendBroadcast(new Intent(Constants.ACTION_BARSHOWN));
             } else {
                 Log.v(TAG, "showBar will hide the systembar");
                 Runtime.getRuntime()
@@ -142,7 +142,7 @@ public class BackgroundService extends Service {
                                         + "done\n"
                                         + "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService" });
                 // no proc.waitFor();
-                sContext.sendBroadcast(new Intent(Constants.ACTION_BARSHOWN));
+                sContext.sendBroadcast(new Intent(Constants.ACTION_BARHIDDEN));
             }
         } catch (Exception e) {
             e.printStackTrace();
