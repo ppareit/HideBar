@@ -52,7 +52,9 @@ public class DemoService extends Service {
 
     @Override
     public void onLowMemory() {
-        super.onLowMemory();
+        // this service is not that important, so stop ourself when
+        // system resources are tight
+        stopSelf();
     }
 
     @Override
