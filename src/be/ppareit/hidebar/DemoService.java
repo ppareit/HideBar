@@ -26,11 +26,15 @@ public class DemoService extends Service {
     LinearLayout mDemoButton = null;
     BarShownReceiver mBarShownReceiver = null;
 
+    /**
+     * When we receive that the bar gets hidden (this receiver is defined in the
+     * manifest), we start the demo service is this is an unpaid application.
+     */
     public static class BarHiddenReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "onReceive broadcast: " + Constants.ACTION_BARHIDDEN);
+            Log.v(TAG, "onReceive broadcast: " + intent.getAction());
             if (Constants.MARKETTYPE != MarketType.DEMO)
                 return;
             context.startService(new Intent(context, DemoService.class));
