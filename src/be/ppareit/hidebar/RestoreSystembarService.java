@@ -209,7 +209,7 @@ public class RestoreSystembarService extends Service {
                 envlist.add(envName + "=" + env.get(envName));
             }
             String[] envp = (String[]) envlist.toArray(new String[0]);
-            Runtime.getRuntime().exec(new String[] { "su", "-c", "input keyevent 4" },
+            Runtime.getRuntime().exec(new String[] { "su", "-c", "LD_LIBRARY_PATH=/vendor/lib:/system/lib input keyevent 4" },
                     envp);
         } catch (Exception e) {
             e.printStackTrace();

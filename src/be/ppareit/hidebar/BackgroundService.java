@@ -138,7 +138,7 @@ public class BackgroundService extends Service {
                                 "-c",
                                 "rm /sdcard/hidebar-lock\n"
                                         + "sleep 5\n"
-                                        + "am startservice -n com.android.systemui/.SystemUIService" },
+                                        + "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService" },
                                 envp);
                 // no proc.waitFor();
                 sContext.sendBroadcast(new Intent(Constants.ACTION_BARSHOWN));
@@ -155,7 +155,7 @@ public class BackgroundService extends Service {
                                         + "killall com.android.systemui\n"
                                         + "sleep 1\n"
                                         + "done\n"
-                                        + "am startservice -n com.android.systemui/.SystemUIService" },
+                                        + "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService" },
                                 envp);
                 // no proc.waitFor();
                 sContext.sendBroadcast(new Intent(Constants.ACTION_BARHIDDEN));
