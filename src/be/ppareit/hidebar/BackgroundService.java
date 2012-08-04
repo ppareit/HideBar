@@ -30,6 +30,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
+import be.ppareit.hidebar.Device.AndroidVersion;
 
 public class BackgroundService extends Service {
 
@@ -119,10 +120,6 @@ public class BackgroundService extends Service {
     }
 
     static void showBar(boolean makeVisible) {
-        // This used to be the following nice calls:
-        // service call activity 79 s16 com.android.systemui
-        // am startservice -n com.android.systemui/.SystemUIService
-        // but now YOU (google engineer) forced me to do such a thing!
         try {
             // get the existing environment
             ArrayList<String> envlist = new ArrayList<String>();
@@ -135,31 +132,33 @@ public class BackgroundService extends Service {
             if (makeVisible) {
                 Log.v(TAG, "showBar will show systembar");
                 // execute in correct environment
-                Runtime.getRuntime()
-                        .exec(new String[] {
-                                "su",
-                                "-c",
-                                "rm /sdcard/hidebar-lock\n"
-                                        + "sleep 5\n"
-                                        + "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService" },
-                                envp);
+                String command;
+                if (Device.getAndroidVersion() == AndroidVersion.HC) {
+                    command = "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService";
+                } else {
+                    command = "rm /sdcard/hidebar-lock\n"
+                            + "sleep 5\n"
+                            + "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService";
+                }
+                Runtime.getRuntime().exec(new String[] { "su", "-c", command }, envp);
                 // no proc.waitFor();
                 sContext.sendBroadcast(new Intent(Constants.ACTION_BARSHOWN));
             } else {
                 Log.v(TAG, "showBar will hide the systembar");
                 // execute in correct environment
-                Runtime.getRuntime()
-                        .exec(new String[] {
-                                "su",
-                                "-c",
-                                "touch /sdcard/hidebar-lock\n"
-                                        + "while [ -f /sdcard/hidebar-lock ]\n"
-                                        + "do\n"
-                                        + "killall com.android.systemui\n"
-                                        + "sleep 1\n"
-                                        + "done\n"
-                                        + "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService" },
-                                envp);
+                String command;
+                if (Device.getAndroidVersion() == AndroidVersion.HC) {
+                    command = "LD_LIBRARY_PATH=/vendor/lib:/system/lib service call activity 79 s16 com.android.systemui";
+                } else {
+                    command = "touch /sdcard/hidebar-lock\n"
+                            + "while [ -f /sdcard/hidebar-lock ]\n"
+                            + "do\n"
+                            + "killall com.android.systemui\n"
+                            + "sleep 1\n"
+                            + "done\n"
+                            + "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService";
+                }
+                Runtime.getRuntime().exec(new String[] { "su", "-c", command }, envp);
                 // no proc.waitFor();
                 sContext.sendBroadcast(new Intent(Constants.ACTION_BARHIDDEN));
             }

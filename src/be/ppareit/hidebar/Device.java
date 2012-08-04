@@ -102,4 +102,26 @@ public final class Device {
 
     }
 
+    public enum AndroidVersion {
+        HC, ICS, JB, UNKNOWN
+    };
+
+    static public AndroidVersion getAndroidVersion() {
+        Log.v(TAG, "getAndroidVersion called");
+        int sdk = android.os.Build.VERSION.SDK_INT;
+        if (11 <= sdk && sdk <= 13) {
+            Log.v(TAG, "We are running on HoneyComb");
+            return AndroidVersion.HC;
+        } else if (14 <= sdk && sdk <= 15) {
+            Log.v(TAG, "We are running on IceCreamSandwich");
+            return AndroidVersion.ICS;
+        } else if (16 == sdk) {
+            Log.v(TAG, "We are running on JellyBean");
+            return AndroidVersion.JB;
+        } else {
+            Log.v(TAG, "We don't know what we are running on");
+            return AndroidVersion.UNKNOWN;
+        }
+    }
+
 }
