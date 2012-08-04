@@ -131,7 +131,14 @@ public class DemoService extends Service {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.setData(Uri.parse("market://details?id=be.ppareit.hidebar"));
-                startActivity(intent);
+                try {
+                    // this can fail if there is no market installed
+                    startActivity(intent);
+                } catch (Exception e) {
+                    Log.e(TAG,
+                            "Failed to lauch the market. Market probably not installed");
+                    e.printStackTrace();
+                }
                 return false;
             }
         });
