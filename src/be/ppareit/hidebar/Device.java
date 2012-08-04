@@ -38,19 +38,22 @@ public final class Device {
 
     static public boolean isRooted() {
 
+        Log.v(TAG, "isRooted called");
+
         if (sRootHasBeenChecked) {
+            Log.v(TAG, "Result for isRooted is cached: " + sDeviceIsRooted);
             return sDeviceIsRooted;
         }
 
-        // first try
-        Log.v(TAG, "Checking if device is rooted with the os build tags");
-        String tags = android.os.Build.TAGS;
-        if (tags != null && tags.contains("test-keys")) {
-            Log.v(TAG, "Device seems rooted");
-            sRootHasBeenChecked = true;
-            sDeviceIsRooted = true;
-            return true;
-        }
+        // // first try
+        // Log.v(TAG, "Checking if device is rooted with the os build tags");
+        // String tags = android.os.Build.TAGS;
+        // if (tags != null && tags.contains("test-keys")) {
+        // Log.v(TAG, "Device seems rooted");
+        // sRootHasBeenChecked = true;
+        // sDeviceIsRooted = true;
+        // return true;
+        // }
 
         // second try
         Log.v(TAG, "Checking if device is rooted by checking if Superuser is available");

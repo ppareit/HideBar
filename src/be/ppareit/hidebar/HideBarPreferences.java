@@ -18,8 +18,10 @@
  ******************************************************************************/
 package be.ppareit.hidebar;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -32,15 +34,14 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-
 /**
  * @author ppareit
- *
- * This preference screen is the main way to interact with the user. Instead of using
- * a SharedPreferences.onSharedPreferenceChangeListener, all the changes are cached
- * here. This enables us to directly make changes, otherwise we would have to wait till
- * the user closes the preference screen.
- *
+ * 
+ *         This preference screen is the main way to interact with the user. Instead of
+ *         using a SharedPreferences.onSharedPreferenceChangeListener, all the changes are
+ *         cached here. This enables us to directly make changes, otherwise we would have
+ *         to wait till the user closes the preference screen.
+ * 
  */
 public class HideBarPreferences extends PreferenceActivity {
 
@@ -51,15 +52,29 @@ public class HideBarPreferences extends PreferenceActivity {
     public void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
+
+        // before running, check is we are rooted
+        if (Device.isRooted() == false) {
+            // display message to the user
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+            alertBuilder.setTitle(R.string.device_not_rooted_label)
+                    .setMessage(R.string.device_not_rooted_text).setCancelable(false)
+                    .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            HideBarPreferences.this.finish();
+                        }
+                    });
+            AlertDialog alert = alertBuilder.create();
+            alert.show();
+        }
+
         addPreferencesFromResource(R.xml.preferences);
 
-        final CheckBoxPreference shouldrunPref =
-            (CheckBoxPreference) findPreference("shouldrun_preference");
-        final CheckBoxPreference runatbootPref =
-            (CheckBoxPreference) findPreference("runatboot_preference");
+        final CheckBoxPreference shouldrunPref = (CheckBoxPreference) findPreference("shouldrun_preference");
+        final CheckBoxPreference runatbootPref = (CheckBoxPreference) findPreference("runatboot_preference");
         runatbootPref.setEnabled(shouldServiceRun());
-        final CheckBoxPreference hideatbootPref =
-            (CheckBoxPreference) findPreference("hideatboot_preference");
+        final CheckBoxPreference hideatbootPref = (CheckBoxPreference) findPreference("hideatboot_preference");
         hideatbootPref.setEnabled(shouldServiceRunAtBoot(this));
         shouldrunPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
@@ -72,7 +87,8 @@ public class HideBarPreferences extends PreferenceActivity {
                     BackgroundService.stop(context);
                 }
                 runatbootPref.setEnabled(shouldrun);
-                hideatbootPref.setEnabled(runatbootPref.isEnabled() && runatbootPref.isChecked());
+                hideatbootPref.setEnabled(runatbootPref.isEnabled()
+                        && runatbootPref.isChecked());
                 return true;
             }
         });
@@ -85,35 +101,38 @@ public class HideBarPreferences extends PreferenceActivity {
         });
 
         final Preference showMethodPreference = findPreference("showbar_method_preference");
-        showMethodPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (newValue.equals("NONE")) {
-                    Resources res = getResources();
-                    Toast.makeText(getApplicationContext(),
-                            res.getText(R.string.showbar_method_none_warning),
-                            Toast.LENGTH_LONG).show();
-                }
-                if (shouldServiceRun()) {
-                    BackgroundService.stop(getApplicationContext());
-                    BackgroundService.start(getApplicationContext(), false);
-                }
-                return true;
-            }
-        });
+        showMethodPreference
+                .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(Preference preference,
+                            Object newValue) {
+                        if (newValue.equals("NONE")) {
+                            Resources res = getResources();
+                            Toast.makeText(getApplicationContext(),
+                                    res.getText(R.string.showbar_method_none_warning),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                        if (shouldServiceRun()) {
+                            BackgroundService.stop(getApplicationContext());
+                            BackgroundService.start(getApplicationContext(), false);
+                        }
+                        return true;
+                    }
+                });
 
         final Preference ghostbackPreference = findPreference("ghostback_preference");
-        ghostbackPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (shouldServiceRun()) {
-                    BackgroundService.stop(getApplicationContext());
-                    BackgroundService.start(getApplicationContext(), false);
-                }
-                return true;
-            }
-        });
-
+        ghostbackPreference
+                .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(Preference preference,
+                            Object newValue) {
+                        if (shouldServiceRun()) {
+                            BackgroundService.stop(getApplicationContext());
+                            BackgroundService.start(getApplicationContext(), false);
+                        }
+                        return true;
+                    }
+                });
 
         final Preference aboutPreference = findPreference("about_preference");
         aboutPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -139,21 +158,19 @@ public class HideBarPreferences extends PreferenceActivity {
 
     static public boolean shouldServiceRunAtBoot(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean("runatboot_preference", true) &&
-            sp.getBoolean("shouldrun_preference", true);
+        return sp.getBoolean("runatboot_preference", true)
+                && sp.getBoolean("shouldrun_preference", true);
     }
 
     static public boolean shouldStatusbarHideAtBoot(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean("runatboot_preference", true) &&
-            sp.getBoolean("shouldrun_preference", true) &&
-            sp.getBoolean("hideatboot_preference", false);
+        return sp.getBoolean("runatboot_preference", true)
+                && sp.getBoolean("shouldrun_preference", true)
+                && sp.getBoolean("hideatboot_preference", false);
     }
 
     public enum ShowMethod {
-        NONE,
-        BOTTOM_TOUCH,
-        BOTTOM_TOP_TOUCH;
+        NONE, BOTTOM_TOUCH, BOTTOM_TOP_TOUCH;
     }
 
     static public ShowMethod methodToShowBar(Context context) {
@@ -167,16 +184,3 @@ public class HideBarPreferences extends PreferenceActivity {
         return sp.getBoolean("ghostback_preference", false);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

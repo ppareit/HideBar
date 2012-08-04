@@ -88,4 +88,21 @@
 
     <string
         name="hidebar_notification">Hide systembar</string>
+
+    <string name="device_not_rooted_label">
+        Device not rooted
+    </string>
+    <string name="device_not_rooted_text">
+        It seems that this device is not rooted.\n\n
+        HideBar cannot work correctly on a non rooted device. To hide the
+		systembar, this application has to use low level functionality of
+		android. This can only be done on a rooted device.\n\n
+		You could first root the device and then try HideBar again.\n\n
+		If your device is rooted and HideBar does not work as expected,
+		contact the developer (Pieter Pareit, pieter.pareit@gmail.com).
+    </string>
+
 </resources>
+
+
+

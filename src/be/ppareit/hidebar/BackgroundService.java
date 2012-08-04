@@ -44,6 +44,9 @@ public class BackgroundService extends Service {
      * Only instantiate class using this method!
      */
     static public void start(Context context, boolean startupbyboot) {
+        // only allow this service to run on rooted devices
+        if (Device.isRooted() == false)
+            return;
         BackgroundService.sStartupByBoot = startupbyboot;
         sIntent = new Intent(context, BackgroundService.class);
         context.startService(sIntent);
