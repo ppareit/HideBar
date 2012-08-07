@@ -22,11 +22,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+/**
+ * @author ppareit
+ * 
+ *         This receiver is called when the device starts up. We initialize the
+ *         application and startup the background service
+ */
 public class StartupReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
         if (HideBarPreferences.shouldServiceRunAtBoot(context)) {
+            Device.initialize(context.getApplicationContext());
             BackgroundService.start(context, true);
         }
     }

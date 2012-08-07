@@ -24,36 +24,54 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Map;
 
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 /**
  * Class with global information about the specific device.
  */
-public final class Device {
+public enum Device {
+
+    INSTANCE;
 
     private static String TAG = Device.class.getSimpleName();
 
-    static boolean sRootHasBeenChecked = false;
-    static boolean sDeviceIsRooted = false;
+    private boolean mHasRootBeenChecked = false;
+    private boolean mIsDeviceRooted = false;
 
-    static public boolean isRooted() {
+    private boolean mHasBeenInitialized = false;
+    private Context mAppContext = null;
+
+    static public void initialize(Context appContext) {
+        if (INSTANCE.mHasBeenInitialized == true)
+            throw new IllegalStateException(
+                    "Trying to initialize already initialized class " + TAG);
+        INSTANCE.mHasBeenInitialized = true;
+        INSTANCE.mAppContext = appContext;
+    }
+
+    static public Device getInstance() {
+        INSTANCE.checkInitialized();
+        return INSTANCE;
+    }
+
+    private void checkInitialized() {
+        if (mHasBeenInitialized == false)
+            throw new IllegalStateException("Singleton class " + TAG
+                    + " is not yet initialized");
+    }
+
+    public boolean isRooted() {
+
+        checkInitialized();
 
         Log.v(TAG, "isRooted called");
 
-        if (sRootHasBeenChecked) {
-            Log.v(TAG, "Result for isRooted is cached: " + sDeviceIsRooted);
-            return sDeviceIsRooted;
+        if (mHasRootBeenChecked) {
+            Log.v(TAG, "Result for isRooted is cached: " + mIsDeviceRooted);
+            return mIsDeviceRooted;
         }
-
-        // // first try
-        // Log.v(TAG, "Checking if device is rooted with the os build tags");
-        // String tags = android.os.Build.TAGS;
-        // if (tags != null && tags.contains("test-keys")) {
-        // Log.v(TAG, "Device seems rooted");
-        // sRootHasBeenChecked = true;
-        // sDeviceIsRooted = true;
-        // return true;
-        // }
 
         // second try
         Log.v(TAG, "Checking if device is rooted by checking if Superuser is available");
@@ -61,8 +79,8 @@ public final class Device {
             File file = new File("/system/app/Superuser.apk");
             if (file.exists()) {
                 Log.v(TAG, "Device seems rooted");
-                sRootHasBeenChecked = true;
-                sDeviceIsRooted = true;
+                mHasRootBeenChecked = true;
+                mIsDeviceRooted = true;
                 return true;
             }
         } catch (Exception e) {
@@ -88,16 +106,16 @@ public final class Device {
             // TODO: can break if the executable is on the device, but non working
             if (in.readLine() != null) {
                 Log.v(TAG, "Device seems rooted");
-                sRootHasBeenChecked = true;
-                sDeviceIsRooted = true;
+                mHasRootBeenChecked = true;
+                mIsDeviceRooted = true;
                 return true;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        sRootHasBeenChecked = true;
-        sDeviceIsRooted = false;
+        mHasRootBeenChecked = true;
+        mIsDeviceRooted = false;
         return false;
 
     }
@@ -106,7 +124,8 @@ public final class Device {
         HC, ICS, JB, UNKNOWN
     };
 
-    static public AndroidVersion getAndroidVersion() {
+    public AndroidVersion getAndroidVersion() {
+        checkInitialized();
         Log.v(TAG, "getAndroidVersion called");
         int sdk = android.os.Build.VERSION.SDK_INT;
         if (11 <= sdk && sdk <= 13) {
@@ -121,6 +140,57 @@ public final class Device {
         } else {
             Log.v(TAG, "We don't know what we are running on");
             return AndroidVersion.UNKNOWN;
+        }
+    }
+
+    public void showSystembar(boolean makeVisible) {
+        checkInitialized();
+        try {
+            // get the existing environment
+            ArrayList<String> envlist = new ArrayList<String>();
+            Map<String, String> env = System.getenv();
+            for (String envName : env.keySet()) {
+                envlist.add(envName + "=" + env.get(envName));
+            }
+            String[] envp = (String[]) envlist.toArray(new String[0]);
+            // depending on makeVisible, show or hide the bar
+            if (makeVisible) {
+                Log.v(TAG, "showBar will show systembar");
+                // execute in correct environment
+                String command;
+                Device dev = Device.getInstance();
+                if (dev.getAndroidVersion() == AndroidVersion.HC) {
+                    command = "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService";
+                } else {
+                    command = "rm /sdcard/hidebar-lock\n"
+                            + "sleep 5\n"
+                            + "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService";
+                }
+                Runtime.getRuntime().exec(new String[] { "su", "-c", command }, envp);
+                // no proc.waitFor();
+                mAppContext.sendBroadcast(new Intent(Constants.ACTION_BARSHOWN));
+            } else {
+                Log.v(TAG, "showBar will hide the systembar");
+                // execute in correct environment
+                String command;
+                Device dev = Device.getInstance();
+                if (dev.getAndroidVersion() == AndroidVersion.HC) {
+                    command = "LD_LIBRARY_PATH=/vendor/lib:/system/lib service call activity 79 s16 com.android.systemui";
+                } else {
+                    command = "touch /sdcard/hidebar-lock\n"
+                            + "while [ -f /sdcard/hidebar-lock ]\n"
+                            + "do\n"
+                            + "killall com.android.systemui\n"
+                            + "sleep 1\n"
+                            + "done\n"
+                            + "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService";
+                }
+                Runtime.getRuntime().exec(new String[] { "su", "-c", command }, envp);
+                // no proc.waitFor();
+                mAppContext.sendBroadcast(new Intent(Constants.ACTION_BARHIDDEN));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

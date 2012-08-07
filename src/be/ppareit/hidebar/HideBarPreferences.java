@@ -53,8 +53,13 @@ public class HideBarPreferences extends PreferenceActivity {
         Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
 
+        // this is the entry of the application when it is started using the
+        // application launcher
+        Device.initialize(getApplicationContext());
+
         // before running, check is we are rooted
-        if (Device.isRooted() == false) {
+        Device dev = Device.getInstance();
+        if (dev.isRooted() == false) {
             // display message to the user
             AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
             alertBuilder.setTitle(R.string.device_not_rooted_label)
