@@ -43,6 +43,9 @@ public enum Device {
     private boolean mHasBeenInitialized = false;
     private Context mAppContext = null;
 
+    // flag if the systembar is currently visible, assume at start this is true
+    private boolean mSystembarVisible = true;
+
     static public void initialize(Context appContext) {
         if (INSTANCE.mHasBeenInitialized == true)
             throw new IllegalStateException(
@@ -168,6 +171,9 @@ public enum Device {
                 }
                 Runtime.getRuntime().exec(new String[] { "su", "-c", command }, envp);
                 // no proc.waitFor();
+                // we just shown the bar, set flag to visible
+                mSystembarVisible = true;
+                // let everybody know that now the bar is visible
                 mAppContext.sendBroadcast(new Intent(Constants.ACTION_BARSHOWN));
             } else {
                 Log.v(TAG, "showBar will hide the systembar");
@@ -187,11 +193,24 @@ public enum Device {
                 }
                 Runtime.getRuntime().exec(new String[] { "su", "-c", command }, envp);
                 // no proc.waitFor();
+                // we just hide the bar, set flag to not visible
+                mSystembarVisible = false;
+                // now let everybody know that the bar has been hidden
                 mAppContext.sendBroadcast(new Intent(Constants.ACTION_BARHIDDEN));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * @return true is the systembar is visible or false when it is not visible
+     */
+    public boolean isSystembarVisible() {
+        checkInitialized();
+        // TODO: this might be improved by using 'ps ...' to see if the systemui process
+        // is running and by checking the /sdcard/hidebar-lock file
+        return mSystembarVisible;
     }
 
 }
