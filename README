@@ -1,3 +1,13 @@
-Android service that hides and restores the honeycomb statusbar.
-See http://ppareit.github.com/HideBar/.
+Android service that hides and restores the android systembar.
+
+This works on all Honeycomb, Ice Cream Sandwich and Jelly Bean devices. The
+device must be rooted.
+
+A webpage with more documentation is available at
+http://ppareit.github.com/HideBar/.
+The program is also available at the android market, see
+https://play.google.com/store/apps/details?id=be.ppareit.hidebar .
+
+For comments, corrections and suggestions, contact me at
+pieter.pareit@gmail.com
 
