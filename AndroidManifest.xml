@@ -35,6 +35,22 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+        <receiver
+            android:name=".widget.HideBarWidget"
+            android:exported="false"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="be.ppareit.hidebar.ACTION_BARSHOWN" />
+                <action android:name="be.ppareit.hidebar.ACTION_BARHIDDEN" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
+
+        <service android:name=".widget.HideBarWidget$UpdateService" />
 
         <service android:name=".DemoService" />
 

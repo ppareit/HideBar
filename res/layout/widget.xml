@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <ImageButton
+        android:id="@+id/widget_button_barvisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/bar_visible"
+        android:background="@null"
+        android:src="@drawable/widget_barvisible"
+        android:text="@string/bar_visible"
+        android:visibility="gone" >
+    </ImageButton>
+
+    <ImageButton
+        android:id="@+id/widget_button_barhidden"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/bar_hidden"
+        android:background="@null"
+        android:src="@drawable/widget_barhidden"
+        android:text="@string/bar_hidden"
+        android:visibility="visible" >
+    </ImageButton>
+
+</LinearLayout>

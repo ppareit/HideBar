@@ -102,6 +102,10 @@
         contact the developer (Pieter Pareit, pieter.pareit@gmail.com).
     </string>
 
+    <string name="widget_label">HideBar Widget</string>
+    <string name="bar_visible">Visible</string>
+    <string name="bar_hidden">Hidden</string>
+
 </resources>
 
 
