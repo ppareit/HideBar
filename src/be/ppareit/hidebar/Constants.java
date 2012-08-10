@@ -7,8 +7,8 @@ public class Constants {
         DEMO, PAID;
     }
 
-    static final MarketType MARKETTYPE = MarketType.DEMO;
+    public static final MarketType MARKETTYPE = MarketType.DEMO;
 
-    static final String ACTION_BARHIDDEN = "be.ppareit.hidebar.ACTION_BARHIDDEN";
-    static final String ACTION_BARSHOWN = "be.ppareit.hidebar.ACTION_BARSHOWN";
+    public static final String ACTION_BARHIDDEN = "be.ppareit.hidebar.ACTION_BARHIDDEN";
+    public static final String ACTION_BARSHOWN = "be.ppareit.hidebar.ACTION_BARSHOWN";
 }
