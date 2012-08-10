@@ -47,9 +47,11 @@ public enum Device {
     private boolean mSystembarVisible = true;
 
     static public void initialize(Context appContext) {
-        if (INSTANCE.mHasBeenInitialized == true)
-            throw new IllegalStateException(
-                    "Trying to initialize already initialized class " + TAG);
+        if (INSTANCE.mHasBeenInitialized == true) {
+            Log.e(TAG, "Initializing already initialized class " + TAG);
+            // throw new IllegalStateException(
+            // "Trying to initialize already initialized class " + TAG);
+        }
         INSTANCE.mHasBeenInitialized = true;
         INSTANCE.mAppContext = appContext;
     }
