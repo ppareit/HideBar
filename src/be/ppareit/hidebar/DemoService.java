@@ -43,8 +43,7 @@ public class DemoService extends Service {
 
     static final String TAG = DemoService.class.getSimpleName();
 
-    LinearLayout mDemoButton = null;
-    BarShownReceiver mBarShownReceiver = null;
+    private LinearLayout mDemoButton = null;
 
     /**
      * When we receive that the bar gets hidden (this receiver is defined in the
@@ -66,15 +65,13 @@ public class DemoService extends Service {
      * When we receive that the bar is shown again, we stop this service so that that the
      * notification that we are running the demo version is removed
      */
-    private class BarShownReceiver extends BroadcastReceiver {
-
+    BroadcastReceiver mBarShownReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.v(TAG, "onReceive broadcast: " + intent.getAction());
             stopSelf();
         }
-
-    }
+    };
 
     @Override
     public void onCreate() {
@@ -83,10 +80,7 @@ public class DemoService extends Service {
 
     @Override
     public void onDestroy() {
-        if (mBarShownReceiver != null) {
-            unregisterReceiver(mBarShownReceiver);
-            mBarShownReceiver = null;
-        }
+        unregisterReceiver(mBarShownReceiver);
         if (mDemoButton != null) {
             WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
             wm.removeView(mDemoButton);
@@ -146,7 +140,6 @@ public class DemoService extends Service {
         wm.addView(mDemoButton, params);
         new HideDemoButtonTask().execute();
         // start listening for the broadcast that the bar is reshow
-        mBarShownReceiver = new BarShownReceiver();
         IntentFilter barShownIntentFilter = new IntentFilter(Constants.ACTION_BARSHOWN);
         registerReceiver(mBarShownReceiver, barShownIntentFilter);
         // for each time the bar is hidden, increment the demo startups
