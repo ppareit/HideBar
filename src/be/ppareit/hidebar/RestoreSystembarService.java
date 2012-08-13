@@ -88,7 +88,8 @@ public class RestoreSystembarService extends Service {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     Log.d(TAG, "touchArea touched");
-                    showSystembar();
+                    Device device = Device.getInstance();
+                    device.showSystembar(true);
                     RestoreSystembarService.this.stopSelf();
                     return false;
                 }
@@ -133,7 +134,8 @@ public class RestoreSystembarService extends Service {
                     Log.d(TAG, "bottomArea touched");
                     mBottomTouchTime = SystemClock.uptimeMillis();
                     if (Math.abs(mBottomTouchTime - mTopTouchTime) < 2000) {
-                        showSystembar();
+                        Device device = Device.getInstance();
+                        device.showSystembar(true);
                         RestoreSystembarService.this.stopSelf();
                     }
                     return false;
@@ -155,7 +157,8 @@ public class RestoreSystembarService extends Service {
                     Log.d(TAG, "topArea touched");
                     mTopTouchTime = SystemClock.uptimeMillis();
                     if (Math.abs(mBottomTouchTime - mTopTouchTime) < 2000) {
-                        showSystembar();
+                        Device device = Device.getInstance();
+                        device.showSystembar(true);
                         RestoreSystembarService.this.stopSelf();
                     }
                     return false;
@@ -194,11 +197,6 @@ public class RestoreSystembarService extends Service {
         return null;
     }
 
-    private void showSystembar() {
-        Log.v(TAG, "showSystembar");
-        BackgroundService.showBar(true);
-    }
-
     private void sendBackEvent() {
         Log.v(TAG, "sendBackEvent");
         try {
@@ -209,7 +207,9 @@ public class RestoreSystembarService extends Service {
                 envlist.add(envName + "=" + env.get(envName));
             }
             String[] envp = (String[]) envlist.toArray(new String[0]);
-            Runtime.getRuntime().exec(new String[] { "su", "-c", "LD_LIBRARY_PATH=/vendor/lib:/system/lib input keyevent 4" },
+            Runtime.getRuntime().exec(
+                    new String[] { "su", "-c",
+                            "LD_LIBRARY_PATH=/vendor/lib:/system/lib input keyevent 4" },
                     envp);
         } catch (Exception e) {
             e.printStackTrace();
