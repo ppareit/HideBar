@@ -18,9 +18,7 @@
  ******************************************************************************/
 package be.ppareit.hidebar;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Map;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -90,7 +88,8 @@ public class RestoreSystembarService extends Service {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
                         Log.d(TAG, "backArea touched");
-                        sendBackEvent();
+                        Device device = Device.getInstance();
+                        device.sendBackEvent();
                         return false;
                     }
                 });
@@ -133,7 +132,8 @@ public class RestoreSystembarService extends Service {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
                         Log.d(TAG, "backArea touched");
-                        sendBackEvent();
+                        Device device = Device.getInstance();
+                        device.sendBackEvent();
                         return false;
                     }
                 });
@@ -211,22 +211,4 @@ public class RestoreSystembarService extends Service {
         return null;
     }
 
-    private void sendBackEvent() {
-        Log.v(TAG, "sendBackEvent");
-        try {
-            // get the existing environment
-            ArrayList<String> envlist = new ArrayList<String>();
-            Map<String, String> env = System.getenv();
-            for (String envName : env.keySet()) {
-                envlist.add(envName + "=" + env.get(envName));
-            }
-            String[] envp = (String[]) envlist.toArray(new String[0]);
-            Runtime.getRuntime().exec(
-                    new String[] { "su", "-c",
-                            "LD_LIBRARY_PATH=/vendor/lib:/system/lib input keyevent 4" },
-                    envp);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

@@ -215,4 +215,23 @@ public enum Device {
         return mSystembarVisible;
     }
 
+    public void sendBackEvent() {
+        Log.v(TAG, "sendBackEvent");
+        try {
+            // get the existing environment
+            ArrayList<String> envlist = new ArrayList<String>();
+            Map<String, String> env = System.getenv();
+            for (String envName : env.keySet()) {
+                envlist.add(envName + "=" + env.get(envName));
+            }
+            String[] envp = (String[]) envlist.toArray(new String[0]);
+            Runtime.getRuntime().exec(
+                    new String[] { "su", "-c",
+                            "LD_LIBRARY_PATH=/vendor/lib:/system/lib input keyevent 4" },
+                    envp);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
