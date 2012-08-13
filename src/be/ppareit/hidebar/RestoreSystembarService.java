@@ -23,8 +23,10 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.os.SystemClock;
@@ -47,6 +49,17 @@ public class RestoreSystembarService extends Service {
 
     private long mBottomTouchTime = -47;
     private long mTopTouchTime = 47;
+
+    /**
+     * When we receive that the bar is shown again, we can stop this service
+     */
+    private BroadcastReceiver mBarShownReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.v(TAG, "onReceive broadcast: " + intent.getAction());
+            stopSelf();
+        }
+    };
 
     @Override
     public void onCreate() {
@@ -90,7 +103,6 @@ public class RestoreSystembarService extends Service {
                     Log.d(TAG, "touchArea touched");
                     Device device = Device.getInstance();
                     device.showSystembar(true);
-                    RestoreSystembarService.this.stopSelf();
                     return false;
                 }
             });
@@ -136,7 +148,6 @@ public class RestoreSystembarService extends Service {
                     if (Math.abs(mBottomTouchTime - mTopTouchTime) < 2000) {
                         Device device = Device.getInstance();
                         device.showSystembar(true);
-                        RestoreSystembarService.this.stopSelf();
                     }
                     return false;
                 }
@@ -159,7 +170,6 @@ public class RestoreSystembarService extends Service {
                     if (Math.abs(mBottomTouchTime - mTopTouchTime) < 2000) {
                         Device device = Device.getInstance();
                         device.showSystembar(true);
-                        RestoreSystembarService.this.stopSelf();
                     }
                     return false;
                 }
@@ -182,11 +192,15 @@ public class RestoreSystembarService extends Service {
         while (!mTouchAreas.isEmpty()) {
             wm.removeView(mTouchAreas.pop());
         }
+        unregisterReceiver(mBarShownReceiver);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v(TAG, "onStartCommand");
+        // start listening for the broadcast that the bar is reshow
+        IntentFilter barShownIntentFilter = new IntentFilter(Constants.ACTION_BARSHOWN);
+        registerReceiver(mBarShownReceiver, barShownIntentFilter);
         // return sticky, so android will keep our service running
         return Service.START_STICKY;
     }
