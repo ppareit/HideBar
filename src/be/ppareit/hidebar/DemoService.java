@@ -37,7 +37,6 @@ import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import be.ppareit.hidebar.Constants.MarketType;
 
 public class DemoService extends Service {
 
@@ -54,8 +53,6 @@ public class DemoService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.v(TAG, "onReceive broadcast: " + intent.getAction());
-            if (Constants.MARKETTYPE != MarketType.DEMO)
-                return;
             context.startService(new Intent(context, DemoService.class));
         }
 
