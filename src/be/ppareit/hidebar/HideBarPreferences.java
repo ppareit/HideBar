@@ -76,9 +76,7 @@ public class HideBarPreferences extends PreferenceActivity {
 
         addPreferencesFromResource(R.xml.preferences);
 
-        final CheckBoxPreference shouldrunPref = (CheckBoxPreference) findPreference("shouldrun_preference");
-        final CheckBoxPreference runatbootPref = (CheckBoxPreference) findPreference("runatboot_preference");
-        runatbootPref.setEnabled(shouldServiceRun());
+        final CheckBoxPreference shouldrunPref = (CheckBoxPreference) findPreference("enable_notification_preference");
         final CheckBoxPreference hideatbootPref = (CheckBoxPreference) findPreference("hideatboot_preference");
         hideatbootPref.setEnabled(shouldServiceRunAtBoot(this));
         shouldrunPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
@@ -91,16 +89,6 @@ public class HideBarPreferences extends PreferenceActivity {
                 } else {
                     BackgroundService.stop(context);
                 }
-                runatbootPref.setEnabled(shouldrun);
-                hideatbootPref.setEnabled(runatbootPref.isEnabled()
-                        && runatbootPref.isChecked());
-                return true;
-            }
-        });
-        runatbootPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                hideatbootPref.setEnabled((Boolean) newValue);
                 return true;
             }
         });
@@ -117,9 +105,10 @@ public class HideBarPreferences extends PreferenceActivity {
                                     res.getText(R.string.showbar_method_none_warning),
                                     Toast.LENGTH_LONG).show();
                         }
-                        if (shouldServiceRun()) {
-                            BackgroundService.stop(getApplicationContext());
-                            BackgroundService.start(getApplicationContext(), false);
+                        Context context = getApplicationContext();
+                        if (shouldServiceRun(context)) {
+                            BackgroundService.stop(context);
+                            BackgroundService.start(context, false);
                         }
                         return true;
                     }
@@ -131,9 +120,10 @@ public class HideBarPreferences extends PreferenceActivity {
                     @Override
                     public boolean onPreferenceChange(Preference preference,
                             Object newValue) {
-                        if (shouldServiceRun()) {
-                            BackgroundService.stop(getApplicationContext());
-                            BackgroundService.start(getApplicationContext(), false);
+                        Context context = getApplicationContext();
+                        if (shouldServiceRun(context)) {
+                            BackgroundService.stop(context);
+                            BackgroundService.start(context, false);
                         }
                         return true;
                     }
@@ -151,27 +141,24 @@ public class HideBarPreferences extends PreferenceActivity {
             }
         });
 
-        if (shouldServiceRun()) {
+        if (shouldServiceRun(getApplicationContext())) {
             BackgroundService.start(getApplicationContext(), false);
         }
     }
 
-    private boolean shouldServiceRun() {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        return sp.getBoolean("shouldrun_preference", true);
+    static public boolean shouldServiceRun(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getBoolean("enable_notification_preference", true);
     }
 
     static public boolean shouldServiceRunAtBoot(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean("runatboot_preference", true)
-                && sp.getBoolean("shouldrun_preference", true);
+        return sp.getBoolean("enable_notification_preference", true);
     }
 
     static public boolean shouldStatusbarHideAtBoot(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean("runatboot_preference", true)
-                && sp.getBoolean("shouldrun_preference", true)
-                && sp.getBoolean("hideatboot_preference", false);
+        return sp.getBoolean("hideatboot_preference", false);
     }
 
     public enum ShowMethod {

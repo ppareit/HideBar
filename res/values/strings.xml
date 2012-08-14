@@ -4,18 +4,20 @@
         name="app_name">Hide Bar</string>
 
     <string
+        name="description_label">Description</string>
+    <string
+        name="description_summary">
+        Hide Bar is an android service that can hide or show the systembar.
+    </string>
+    <string
         name="settings_label">Settings</string>
 
     <string
-        name="running_label">Service running</string>
+        name="enable_notification">Enable in notification area</string>
     <string
-        name="running_summary">To hide the systembar, this service must be running.
-    </string>
-
-    <string
-        name="runatboot_label">Start service at boot</string>
-    <string
-        name="runatboot_summary">This will automatically start Hide Bar during boot.
+        name="enable_notification_summary">
+        This will put a menu in the notification area,
+        from where the systembar can be hidden.
     </string>
 
     <string
@@ -60,6 +62,7 @@
         name="help_summary">Use the icon with two downward arrows in the systembar to
         open a notification. Then click on that notification to hide the systembar. To
         show the systembar again, touch the bottom of the screen.
+        \nThere is also a widgit available to hide or show the systembar.
     </string>
 
     <string

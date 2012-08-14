@@ -2,16 +2,16 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
+        android:title="@string/description_label">
+    <Preference
+        android:title="@string/description_summary" />
+    </PreferenceCategory>
+    <PreferenceCategory
         android:title="@string/settings_label">
         <CheckBoxPreference
-            android:key="shouldrun_preference"
-            android:title="@string/running_label"
-            android:summary="@string/running_summary"
-            android:defaultValue="true" />
-        <CheckBoxPreference
-            android:key="runatboot_preference"
-            android:title="@string/runatboot_label"
-            android:summary="@string/runatboot_summary"
+            android:key="enable_notification_preference"
+            android:title="@string/enable_notification"
+            android:summary="@string/enable_notification_summary"
             android:defaultValue="true" />
         <CheckBoxPreference
             android:key="hideatboot_preference"
