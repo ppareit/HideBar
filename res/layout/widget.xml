@@ -12,10 +12,10 @@
         android:contentDescription="@string/bar_visible"
         android:background="@null"
         android:src="@drawable/widget_barvisible"
+        android:scaleType="fitXY"
         android:text="@string/bar_visible"
         android:visibility="gone" >
     </ImageButton>
-
     <ImageButton
         android:id="@+id/widget_button_barhidden"
         android:layout_width="wrap_content"
@@ -23,6 +23,7 @@
         android:contentDescription="@string/bar_hidden"
         android:background="@null"
         android:src="@drawable/widget_barhidden"
+        android:scaleType="fitXY"
         android:text="@string/bar_hidden"
         android:visibility="visible" >
     </ImageButton>
