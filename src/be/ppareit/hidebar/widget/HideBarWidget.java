@@ -20,6 +20,8 @@ public class HideBarWidget extends AppWidgetProvider {
 
     static final String TAG = HideBarWidget.class.getSimpleName();
 
+    private static Intent sToggleIntent = null;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.v(TAG, "onReceive action: " + intent.getAction());
@@ -36,7 +38,6 @@ public class HideBarWidget extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         Log.v(TAG, "onEnabled called");
-        Device.initialize(context.getApplicationContext());
         super.onEnabled(context);
     }
 
@@ -52,7 +53,7 @@ public class HideBarWidget extends AppWidgetProvider {
         @Override
         public void onStart(Intent intent, int startId) {
 
-            Log.v(TAG, "UpdateQService onStart called");
+            Log.v(TAG, "UpdateService onStart called");
             // Build the widget update
             RemoteViews views = buildUpdate(this);
 
@@ -69,10 +70,12 @@ public class HideBarWidget extends AppWidgetProvider {
 
             Log.v(TAG, "UpdateService buildUpdate called");
 
+            Device.initialize(context.getApplicationContext());
+            sToggleIntent = new Intent(context, ToggleSystembarReceiver.class);
+
             // Create an Intent to launch ExampleActivity
-            Intent intent = new Intent(context, ToggleSystembarReceiver.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
-                    0);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
+                    sToggleIntent, 0);
 
             // Get the layout for the App Widget and attach an on-click listener
             // to the button

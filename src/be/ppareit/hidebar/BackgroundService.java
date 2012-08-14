@@ -97,9 +97,8 @@ public class BackgroundService extends Service {
 
         // we where asked to stop running, so make sure the user gets back his
         // status bar
-        showBar(true);
-
-        stopService(new Intent(this, RestoreSystembarService.class));
+        Device device = Device.getInstance();
+        device.showSystembar(true);
     }
 
     @Override
@@ -114,10 +113,5 @@ public class BackgroundService extends Service {
     public IBinder onBind(Intent intent) {
         Log.v(TAG, "onBind");
         return null;
-    }
-
-    static void showBar(boolean makeVisible) {
-        Device dev = Device.getInstance();
-        dev.showSystembar(makeVisible);
     }
 }

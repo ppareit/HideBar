@@ -33,17 +33,15 @@ public class ToggleSystembarReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.v(TAG, "onReceive");
-        Device dev = Device.getInstance();
-        if (dev.isSystembarVisible() == true) {
+        Device.initialize(context);
+        Device device = Device.getInstance();
+        if (device.isSystembarVisible() == true) {
             // we need to hide the statusbar
-            BackgroundService.showBar(false);
+            device.showSystembar(false);
             // start the restore systembar service
             context.startService(new Intent(context, RestoreSystembarService.class));
         } else {
-            // TODO: improve on this, the RestoreSystembarService could be implemented
-            // with an broadcastreceiver for ACTION_BARHIDDEN
-            BackgroundService.stop(context);
-            BackgroundService.start(context, false);
+            device.showSystembar(true);
         }
     }
 }
