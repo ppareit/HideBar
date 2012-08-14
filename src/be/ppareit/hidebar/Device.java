@@ -78,7 +78,7 @@ public enum Device {
             return mIsDeviceRooted;
         }
 
-        // second try
+        // first try
         Log.v(TAG, "Checking if device is rooted by checking if Superuser is available");
         try {
             File file = new File("/system/app/Superuser.apk");
@@ -92,7 +92,7 @@ public enum Device {
             e.printStackTrace();
         }
 
-        // third try
+        // second try
         Log.v(TAG, "Checking if device is rooted by checking if su is available");
         try {
             // get the existing environment
@@ -103,8 +103,8 @@ public enum Device {
             }
             String[] envp = (String[]) envlist.toArray(new String[0]);
             // execute which su
-            Process proc = Runtime.getRuntime().exec(
-                    new String[] { "/system/xbin/which", "su" }, envp);
+            Process proc = Runtime.getRuntime()
+                    .exec(new String[] { "which", "su" }, envp);
             BufferedReader in = new BufferedReader(new InputStreamReader(
                     proc.getInputStream()));
             // if we receive location, we are on a rooted device
