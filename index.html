@@ -12,27 +12,42 @@
 
 <center>
 <a href="https://play.google.com/store/apps/details?id=be.ppareit.hidebar">Market</a>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="https://github.com/downloads/ppareit/HideBar/HideBar_demo_1_5.apk">Free Demo</a>
 </p>
 <img src="qr-code.png" height="140" width="140" />
 </center>
 
 </p>
+Android service that hides and restores the systembar of android tablets.
+This enables playing, watching and reading at full screen!
 
-Android service that hides and restores the systembar of android tablet devices. Works
-on tablets with Honey Comb, Ice Cream Sandwich or Jelly Bean.
+<h2>Installation</h2>
+<ul>
+<li/>This application needs ROOT! Only install and use when you have
+root+busybox+superuser!
+<li/>BusyBox must be installed and at least once run.
+</ul>
 
-<h2>Description</h2>
-Android tablets contain a systembar that is always visible. In the systembar there
-are controls to move back, to move to the home screen and to show all running
-applications. The systembar also displays the clock, notifications and settings.<p/>
-Android cannot do without this systembar, as the user must always have the
-ability to click on the back button. There is no physical button to go back, so the
-bar must always be displayed. Yet, there are times the user wants do have the extra
-screen estate taken by the systembar. For instance when playing a movie.<p/>
-Hide Bar can help with this. When running the Hide Bar service, an icon will be available
-in the systembar. When clicking on this, a notification will be shown. If the
-notification is selected, the bar will hide itself. When the systembar is needed
-again, a touch at the bottom of the screen will bring the bar back.
+<h2>Usage</h2>
+<ul>
+<li/>First click on icon with two arrows to show notification, then on
+notification to hide the system bar.
+<li/>Tapping the bottom of the screen will reshow the system bar.
+</ul>
+
+<h2>Current bugs</h2>
+<ul>
+<li/>Some devices (ICS, JB) have a blinking wallpaper, use life wallpapers
+to get around this. In the future, a fix will be provided.
+<li/>Some devices (not many) are slow to reshow the systembar, up to half
+a minute and the ghost back button does not work. Other than that,
+everything else works.
+<li/>It might display a message that the tablet is not rooted,
+while you know that the tablet is rooted. This is because one of
+the methods that tests for root depends on busybox. Then you need to
+install busybox and run busybox at least once.
+</ul>
 
 <h2>History</h2>
 <ul>
@@ -57,17 +72,27 @@ systembar is hidden.
 <li/> Version 0.4 (09/10/2011): Support for more devices.
 </ul>
 
-<h2>Limitations</h2>
-Hide Bar expects root to work. I cannot help you with that. I would rather implement this
-with public and documented api's. But alas, this is a hidden feature in Honeycomb (and even
-more hidden in Ice Cream Sandwich). I'm sure that, the day it gets documented, it will be
-part of the system and then there will be no need for this application. But for now, this
-is the best we can do.
-<p>
-This program will remove the background wallpaper. This is a technical problem because the
-systembar and the background picture are provided by the same proces. This can be solved
-by using a live wallpaper.
+<h2>Description</h2>
 
+Android tablets contain a system bar at the bottom that is always visible.
+In the systembar there are controls to move back, to move to the home screen
+and to show all running applications. The system bar also displays the clock,
+notifications and settings.</p>
+
+Android cannot do without this bar, as the user must always have the ability
+to click on the back button. There is no physical button to go back, so the
+status bar must always be displayed. Yet, there are times the user wants do
+have the extra screen estate taken by the system bar. For instance when playing
+a movie or a game. It is also a very nice companion for an e-reader or while
+reading a pdf.</p>
+
+Hide Bar can help with this. When running the Hide Bar service, an icon will
+be available in the status bar. When clicking on this, a notification will be
+shown. If the notification is selected, the bar will hide itself. When the
+statusbar is needed again, a swipe at the bottom of the screen will bring the
+systembar back on top. To help with the navigation inside application, there
+is an invisible back button, I call it the ghost back button. You can enable
+this from the settings.</p>
 
 <h2>Hardware</h2>
 This program should work on all rooted android tablets. Both HoneyComb and
@@ -107,8 +132,8 @@ let me know and I'll provide you with a build without the link to the market.
 </p>
 
 If the systembar does not hide, then make sure you have installed SuperUser and BusyBox
-and both are of a recent version. Most rooting methods install both applications but some
-leave that step to you.
+and both are of a recent version. BusyBox must be run after installation to work. Most
+rooting methods install both applications but some leave that step to you.
 
 <h2>License</h2>
 <p>GNU General Public License version 3.0</p>
