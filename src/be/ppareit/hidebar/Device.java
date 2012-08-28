@@ -93,6 +93,20 @@ public enum Device {
         }
 
         // second try
+        Log.v(TAG, "Checking if device is rooted by checking usual position of su");
+        try {
+            File file = new File("/system/xbin/su");
+            if (file.exists()) {
+                Log.v(TAG, "Device seems rooted");
+                mHasRootBeenChecked = true;
+                mIsDeviceRooted = true;
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // third try
         Log.v(TAG, "Checking if device is rooted by checking if su is available");
         try {
             // get the existing environment
