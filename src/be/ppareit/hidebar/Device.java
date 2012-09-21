@@ -139,6 +139,38 @@ public enum Device {
 
     }
 
+    public boolean canCallLowLevel() {
+        checkInitialized();
+        Log.v(TAG, "canCallLowLevel called");
+
+        try {
+            // get the existing environment
+            ArrayList<String> envlist = new ArrayList<String>();
+            Map<String, String> env = System.getenv();
+            for (String envName : env.keySet()) {
+                envlist.add(envName + "=" + env.get(envName));
+            }
+            String[] envp = (String[]) envlist.toArray(new String[0]);
+            Process proc1 = Runtime.getRuntime().exec(new String[] { "which", "touch" },
+                    envp);
+            // this blocks
+            synchronized (proc1) {
+                proc1.wait(1000);
+            }
+            Process proc2 = Runtime.getRuntime().exec(
+                    new String[] { "which", "killall" }, envp);
+            // this blocks
+            synchronized (proc2) {
+                proc2.wait(1000);
+            }
+            return (proc1.exitValue() == 0 || proc2.exitValue() == 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     public enum AndroidVersion {
         HC, ICS, JB, UNKNOWN
     };

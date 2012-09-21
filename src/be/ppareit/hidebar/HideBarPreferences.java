@@ -74,6 +74,22 @@ public class HideBarPreferences extends PreferenceActivity {
             alert.show();
         }
 
+        // before running, check if the low level stuff is ok
+        if (dev.canCallLowLevel() == false) {
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+            alertBuilder.setTitle(R.string.unable_to_call_low_level_label)
+                    .setMessage(R.string.unable_to_call_low_level_text)
+                    .setCancelable(false)
+                    .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            HideBarPreferences.this.finish();
+                        }
+                    }).setNegativeButton("Ignore this warning", null);
+            AlertDialog alert = alertBuilder.create();
+            alert.show();
+        }
+
         addPreferencesFromResource(R.xml.preferences);
 
         final CheckBoxPreference shouldrunPref = (CheckBoxPreference) findPreference("enable_notification_preference");

@@ -106,6 +106,18 @@
         If your device is rooted and HideBar does not work as expected,
         contact the developer (Pieter Pareit, pieter.pareit@gmail.com).
     </string>
+    
+    <string name="unable_to_call_low_level_label">
+        Unable to call low level
+    </string>
+    <string name="unable_to_call_low_level_text">
+        Your device is rooted. At the same time, I\'m unable to find some
+        needed low level functionallity. That functionallity is provided by
+        BusyBox. BusyBox can be installed from the market. Once BusyBox is
+		installed, it should be run at least once to enable the low level
+		functionallity.\n\n
+		You can ignore this warning, but then HideBar will probably not work.
+    </string>
 
     <string name="widget_label">HideBar Widget</string>
     <string name="bar_visible">Visible</string>
