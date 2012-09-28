@@ -16,7 +16,7 @@
  * Contributors:
  *     Pieter Pareit - initial API and implementation
  ******************************************************************************/
-package be.ppareit.hidebar;
+package be.ppareit.hidebar_demo;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;

@@ -16,29 +16,26 @@
  * Contributors:
  *     Pieter Pareit - initial API and implementation
  ******************************************************************************/
-package be.ppareit.hidebar;
+package be.ppareit.hidebar_demo;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 /**
- * When this receiver is called, it will hide the systembar and start the service to
- * detect when to redisplay the systembar. This class can be used for instance in a
- * notification.
+ * @author ppareit
+ * 
+ *         This receiver is called when the device starts up. We initialize the
+ *         application and startup the background service
  */
-public class HideSystembarReceiver extends BroadcastReceiver {
-
-    private static final String TAG = HideSystembarReceiver.class.getSimpleName();
+public class StartupReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.v(TAG, "onReceive");
-        // we received the intent to hide the statusbar
-        Device device = Device.getInstance();
-        device.showSystembar(false);
-        // start the restore systembar service
-        context.startService(new Intent(context, RestoreSystembarService.class));
+        if (HideBarPreferences.shouldServiceRunAtBoot(context)) {
+            Device.initialize(context.getApplicationContext());
+            BackgroundService.start(context, true);
+        }
     }
+
 }

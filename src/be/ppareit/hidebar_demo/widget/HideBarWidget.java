@@ -1,4 +1,4 @@
-package be.ppareit.hidebar.widget;
+package be.ppareit.hidebar_demo.widget;
 
 import android.app.PendingIntent;
 import android.app.Service;
@@ -11,10 +11,10 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
-import be.ppareit.hidebar.Constants;
-import be.ppareit.hidebar.Device;
-import be.ppareit.hidebar.R;
-import be.ppareit.hidebar.ToggleSystembarReceiver;
+import be.ppareit.hidebar_demo.Constants;
+import be.ppareit.hidebar_demo.Device;
+import be.ppareit.hidebar_demo.R;
+import be.ppareit.hidebar_demo.ToggleSystembarReceiver;
 
 public class HideBarWidget extends AppWidgetProvider {
 

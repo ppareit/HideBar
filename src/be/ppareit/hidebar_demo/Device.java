@@ -16,7 +16,7 @@
  * Contributors:
  *     Pieter Pareit - initial API and implementation
  ******************************************************************************/
-package be.ppareit.hidebar;
+package be.ppareit.hidebar_demo;
 
 import java.io.BufferedReader;
 import java.io.File;

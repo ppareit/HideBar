@@ -1,4 +1,4 @@
-package be.ppareit.hidebar;
+package be.ppareit.hidebar_demo;
 
 public class Constants {
 
