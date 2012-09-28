@@ -96,7 +96,7 @@
         Device not rooted
     </string>
     <string name="device_not_rooted_text">
-        It seems that this device is not rooted or busybox is not configured.\n\n
+        It seems that this device is not rooted or busybox is not configured correctly.\n\n
         HideBar cannot work correctly on a non rooted device. To hide the
         systembar, this application has to use low level functionality of
         android. This can only be done on a rooted device.\n\n
@@ -106,7 +106,14 @@
         If your device is rooted and HideBar does not work as expected,
         contact the developer (Pieter Pareit, pieter.pareit@gmail.com).
     </string>
-    
+    <string name="exit_button_text">
+        Exit
+    </string>
+    <string name="ignore_button_text">
+        Ignore
+    </string>
+
+
     <string name="unable_to_call_low_level_label">
         Unable to call low level
     </string>

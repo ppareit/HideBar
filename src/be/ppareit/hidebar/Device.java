@@ -26,6 +26,7 @@ import java.util.Map;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.util.Log;
 
 /**
@@ -70,6 +71,10 @@ public enum Device {
     public boolean isRooted() {
 
         checkInitialized();
+
+        Resources res = mAppContext.getResources();
+        if (res.getBoolean(R.bool.debug_notrooted) == true)
+            return false;
 
         Log.v(TAG, "isRooted called");
 
@@ -141,6 +146,11 @@ public enum Device {
 
     public boolean canCallLowLevel() {
         checkInitialized();
+
+        Resources res = mAppContext.getResources();
+        if (res.getBoolean(R.bool.debug_nobusybox) == true)
+            return false;
+
         Log.v(TAG, "canCallLowLevel called");
 
         try {

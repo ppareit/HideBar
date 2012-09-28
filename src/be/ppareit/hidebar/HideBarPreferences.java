@@ -62,30 +62,36 @@ public class HideBarPreferences extends PreferenceActivity {
         if (dev.isRooted() == false) {
             // display message to the user
             AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-            alertBuilder.setTitle(R.string.device_not_rooted_label)
-                    .setMessage(R.string.device_not_rooted_text).setCancelable(false)
-                    .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            HideBarPreferences.this.finish();
-                        }
-                    });
+            alertBuilder
+                    .setTitle(R.string.device_not_rooted_label)
+                    .setMessage(R.string.device_not_rooted_text)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.exit_button_text,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    HideBarPreferences.this.finish();
+                                }
+                            });
             AlertDialog alert = alertBuilder.create();
             alert.show();
         }
 
         // before running, check if the low level stuff is ok
-        if (dev.canCallLowLevel() == false) {
+        if (dev.isRooted() == true && dev.canCallLowLevel() == false) {
             AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
             alertBuilder.setTitle(R.string.unable_to_call_low_level_label)
                     .setMessage(R.string.unable_to_call_low_level_text)
-                    .setCancelable(false)
-                    .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+                    .setCancelable(false);
+            alertBuilder.setPositiveButton(R.string.exit_button_text,
+                    new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             HideBarPreferences.this.finish();
+                            BackgroundService.stop(getApplicationContext());
                         }
-                    }).setNegativeButton("Ignore this warning", null);
+                    });
+            alertBuilder.setNegativeButton(R.string.ignore_button_text, null);
             AlertDialog alert = alertBuilder.create();
             alert.show();
         }

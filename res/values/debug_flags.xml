@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <bool name="debug_notrooted">false</bool>
+    <bool name="debug_nobusybox">true</bool>
+    
+</resources>
