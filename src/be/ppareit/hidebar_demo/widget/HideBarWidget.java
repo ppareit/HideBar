@@ -94,7 +94,9 @@ public class HideBarWidget extends AppWidgetProvider {
             // to the button
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
             views.setOnClickPendingIntent(R.id.widget_button_barhidden, pendingIntent);
+            // if (HideBarPreferences.inKioskMode(context) == false) {
             views.setOnClickPendingIntent(R.id.widget_button_barvisible, pendingIntent);
+            // }
 
             // Get the state of the systembar and show the correct image on the button
             Device dev = Device.getInstance();

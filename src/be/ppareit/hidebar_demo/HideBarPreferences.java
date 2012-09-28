@@ -193,6 +193,10 @@ public class HideBarPreferences extends PreferenceActivity {
         return ShowMethod.valueOf(method);
     }
 
+    static public boolean inKioskMode(Context context) {
+        return methodToShowBar(context) == ShowMethod.NONE;
+    }
+
     static public boolean ghostbackButton(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         return sp.getBoolean("ghostback_preference", false);
