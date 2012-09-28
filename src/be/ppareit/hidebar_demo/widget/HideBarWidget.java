@@ -16,12 +16,23 @@ import be.ppareit.hidebar_demo.Device;
 import be.ppareit.hidebar_demo.R;
 import be.ppareit.hidebar_demo.ToggleSystembarReceiver;
 
+/**
+ * Widget belonging to HideBar. This widget should indicate if the systembar is shown or
+ * not. When the user touches the widget, the systembar visibility should toggle. When in
+ * kiosk modus, the widget should be disabled otherwise it would be posible to get out of
+ * kiosk modus.
+ */
 public class HideBarWidget extends AppWidgetProvider {
 
     static final String TAG = HideBarWidget.class.getSimpleName();
 
+    // this intent will be set to an intent that can toggle the visibility of the
+    // systembar
     private static Intent sToggleIntent = null;
 
+    // this receiver listens to broadcasts of the HideBar application, it catches when the
+    // bar is shown or hidden, when this happens, it will update the displayed icon via
+    // the updateservice
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.v(TAG, "onReceive action: " + intent.getAction());
@@ -71,9 +82,11 @@ public class HideBarWidget extends AppWidgetProvider {
             Log.v(TAG, "UpdateService buildUpdate called");
 
             Device.initialize(context.getApplicationContext());
+
+            // set the intent that can toggle the systembar visibility
             sToggleIntent = new Intent(context, ToggleSystembarReceiver.class);
 
-            // Create an Intent to launch ExampleActivity
+            // pack that intent into a pending intent
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
                     sToggleIntent, 0);
 
