@@ -28,6 +28,8 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.stericson.RootTools.RootTools;
+
 public class BackgroundService extends Service {
 
     static final String TAG = BackgroundService.class.getSimpleName();
@@ -55,8 +57,7 @@ public class BackgroundService extends Service {
         Log.v(TAG, "onCreate");
 
         // only allow this service to run on rooted devices
-        Device dev = Device.getInstance();
-        if (dev.isRooted() == false) {
+        if (RootTools.isRootAvailable() == false) {
             Log.v(TAG, "Device not rooted, stopping service " + TAG);
             stopSelf();
         }

@@ -18,16 +18,12 @@
  ******************************************************************************/
 package be.ppareit.hidebar_demo;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Map;
-
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.util.Log;
+
+import com.stericson.RootTools.CommandCapture;
+import com.stericson.RootTools.RootTools;
 
 /**
  * Class with global information about the specific device.
@@ -37,9 +33,6 @@ public enum Device {
     INSTANCE;
 
     private static String TAG = Device.class.getSimpleName();
-
-    private boolean mHasRootBeenChecked = false;
-    private boolean mIsDeviceRooted = false;
 
     private boolean mHasBeenInitialized = false;
     private Context mAppContext = null;
@@ -68,119 +61,6 @@ public enum Device {
                     + " is not yet initialized");
     }
 
-    public boolean isRooted() {
-
-        checkInitialized();
-
-        Resources res = mAppContext.getResources();
-        if (res.getBoolean(R.bool.debug_notrooted) == true)
-            return false;
-
-        Log.v(TAG, "isRooted called");
-
-        if (mHasRootBeenChecked) {
-            Log.v(TAG, "Result for isRooted is cached: " + mIsDeviceRooted);
-            return mIsDeviceRooted;
-        }
-
-        // first try
-        Log.v(TAG, "Checking if device is rooted by checking if Superuser is available");
-        try {
-            File file = new File("/system/app/Superuser.apk");
-            if (file.exists()) {
-                Log.v(TAG, "Device seems rooted");
-                mHasRootBeenChecked = true;
-                mIsDeviceRooted = true;
-                return true;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // second try
-        Log.v(TAG, "Checking if device is rooted by checking usual position of su");
-        try {
-            File file = new File("/system/xbin/su");
-            if (file.exists()) {
-                Log.v(TAG, "Device seems rooted");
-                mHasRootBeenChecked = true;
-                mIsDeviceRooted = true;
-                return true;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // third try
-        Log.v(TAG, "Checking if device is rooted by checking if su is available");
-        try {
-            // get the existing environment
-            ArrayList<String> envlist = new ArrayList<String>();
-            Map<String, String> env = System.getenv();
-            for (String envName : env.keySet()) {
-                envlist.add(envName + "=" + env.get(envName));
-            }
-            String[] envp = (String[]) envlist.toArray(new String[0]);
-            // execute which su
-            Process proc = Runtime.getRuntime()
-                    .exec(new String[] { "which", "su" }, envp);
-            BufferedReader in = new BufferedReader(new InputStreamReader(
-                    proc.getInputStream()));
-            // if we receive location, we are on a rooted device
-            // TODO: can break if the executable is on the device, but non working
-            if (in.readLine() != null) {
-                Log.v(TAG, "Device seems rooted");
-                mHasRootBeenChecked = true;
-                mIsDeviceRooted = true;
-                return true;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        mHasRootBeenChecked = true;
-        mIsDeviceRooted = false;
-        return false;
-
-    }
-
-    public boolean canCallLowLevel() {
-        checkInitialized();
-
-        Resources res = mAppContext.getResources();
-        if (res.getBoolean(R.bool.debug_nobusybox) == true)
-            return false;
-
-        Log.v(TAG, "canCallLowLevel called");
-
-        try {
-            // get the existing environment
-            ArrayList<String> envlist = new ArrayList<String>();
-            Map<String, String> env = System.getenv();
-            for (String envName : env.keySet()) {
-                envlist.add(envName + "=" + env.get(envName));
-            }
-            String[] envp = (String[]) envlist.toArray(new String[0]);
-            Process proc1 = Runtime.getRuntime().exec(new String[] { "which", "touch" },
-                    envp);
-            // this blocks
-            synchronized (proc1) {
-                proc1.wait(1000);
-            }
-            Process proc2 = Runtime.getRuntime().exec(
-                    new String[] { "which", "killall" }, envp);
-            // this blocks
-            synchronized (proc2) {
-                proc2.wait(1000);
-            }
-            return (proc1.exitValue() == 0 || proc2.exitValue() == 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
     public enum AndroidVersion {
         HC, ICS, JB, UNKNOWN
     };
@@ -207,30 +87,21 @@ public enum Device {
     public void showSystembar(boolean makeVisible) {
         checkInitialized();
         try {
-            // get the existing environment
-            ArrayList<String> envlist = new ArrayList<String>();
-            Map<String, String> env = System.getenv();
-            for (String envName : env.keySet()) {
-                envlist.add(envName + "=" + env.get(envName));
-            }
-            String[] envp = (String[]) envlist.toArray(new String[0]);
             // depending on makeVisible, show or hide the bar
             if (makeVisible) {
                 Log.v(TAG, "showBar will show systembar");
                 // execute in correct environment
-                String command;
+                CommandCapture command;
                 if (getAndroidVersion() == AndroidVersion.HC) {
-                    command = "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService";
+                    command = new CommandCapture(0,
+                            "am startservice -n com.android.systemui/.SystemUIService");
                 } else {
-                    command = "rm /sdcard/hidebar-lock\n"
-                            + "sleep 3\n"
-                            + "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService";
+                    command = new CommandCapture(0, "rm /sdcard/hidebar-lock\n"
+                            + "sleep 3\n" + "LD_LIBRARY_PATH=/vendor/lib:/system/lib "
+                            + "am startservice -n com.android.systemui/.SystemUIService");
                 }
-                Runtime.getRuntime().exec(new String[] { "su", "-c", command }, envp);
-                // as strange as it is, the following makes sure that the bar gets reshown
-                // quickly on some devices
-                Runtime.getRuntime().exec("adb shell");
-                // no proc.waitFor();
+                // RootTools.getShell(true).closeAll();
+                RootTools.getShell(true).add(command).waitForFinish();
                 // we just shown the bar, set flag to visible
                 mSystembarVisible = true;
                 // let everybody know that now the bar is visible
@@ -238,19 +109,22 @@ public enum Device {
             } else {
                 Log.v(TAG, "showBar will hide the systembar");
                 // execute in correct environment
-                String command;
+                CommandCapture command;
                 if (getAndroidVersion() == AndroidVersion.HC) {
-                    command = "LD_LIBRARY_PATH=/vendor/lib:/system/lib service call activity 79 s16 com.android.systemui";
+                    command = new CommandCapture(0,
+                            "LD_LIBRARY_PATH=/vendor/lib:/system/lib "
+                                    + "service call activity 79 s16 com.android.systemui");
+                } else if (RootTools.isBusyboxAvailable()) {
+                    command = new CommandCapture(0, "touch /sdcard/hidebar-lock\n"
+                            + "while [ -f /sdcard/hidebar-lock ]\n" + "do\n"
+                            + "busybox killall com.android.systemui\n" + "sleep 1\n"
+                            + "done &\n");
                 } else {
-                    command = "touch /sdcard/hidebar-lock\n"
-                            + "while [ -f /sdcard/hidebar-lock ]\n"
-                            + "do\n"
-                            + "killall com.android.systemui\n"
-                            + "sleep 1\n"
-                            + "done\n"
-                            + "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService";
+                    command = new CommandCapture(0, "touch /sdcard/hidebar-lock\n"
+                            + "while [ -f /sdcard/hidebar-lock ]\n" + "do\n"
+                            + "killall com.android.systemui\n" + "sleep 1\n" + "done &\n");
                 }
-                Runtime.getRuntime().exec(new String[] { "su", "-c", command }, envp);
+                RootTools.getShell(true).add(command);
                 // no proc.waitFor();
                 // we just hide the bar, set flag to not visible
                 mSystembarVisible = false;
@@ -275,18 +149,9 @@ public enum Device {
     public void sendBackEvent() {
         Log.v(TAG, "sendBackEvent");
         try {
-            // get the existing environment
-            ArrayList<String> envlist = new ArrayList<String>();
-            Map<String, String> env = System.getenv();
-            for (String envName : env.keySet()) {
-                envlist.add(envName + "=" + env.get(envName));
-            }
-            String[] envp = (String[]) envlist.toArray(new String[0]);
-            Runtime.getRuntime().exec(
-                    new String[] { "su", "-c",
-                            "LD_LIBRARY_PATH=/vendor/lib:/system/lib input keyevent 4" },
-                    envp);
-
+            CommandCapture command = new CommandCapture(0,
+                    "LD_LIBRARY_PATH=/vendor/lib:/system/lib input keyevent 4");
+            RootTools.getShell(true).add(command);
         } catch (Exception e) {
             e.printStackTrace();
         }
