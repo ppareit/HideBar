@@ -34,6 +34,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.stericson.RootTools.RootTools;
+
 /**
  * @author ppareit
  * 
@@ -59,7 +61,7 @@ public class HideBarPreferences extends PreferenceActivity {
 
         // before running, check if we are rooted
         Device dev = Device.getInstance();
-        if (dev.isRooted() == false) {
+        if (RootTools.isRootAvailable() == false) {
             // display message to the user
             AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
             alertBuilder
@@ -78,7 +80,8 @@ public class HideBarPreferences extends PreferenceActivity {
         }
 
         // before running, check if the low level stuff is ok
-        if (dev.isRooted() == true && dev.canCallLowLevel() == false) {
+        if (RootTools.isRootAvailable() == true
+                && RootTools.isBusyboxAvailable() == false) {
             AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
             alertBuilder.setTitle(R.string.unable_to_call_low_level_label)
                     .setMessage(R.string.unable_to_call_low_level_text)
