@@ -224,10 +224,13 @@ public enum Device {
                     command = "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService";
                 } else {
                     command = "rm /sdcard/hidebar-lock\n"
-                            + "sleep 5\n"
+                            + "sleep 3\n"
                             + "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService";
                 }
                 Runtime.getRuntime().exec(new String[] { "su", "-c", command }, envp);
+                // as strange as it is, the following makes sure that the bar gets reshown
+                // quickly on some devices
+                Runtime.getRuntime().exec("adb shell");
                 // no proc.waitFor();
                 // we just shown the bar, set flag to visible
                 mSystembarVisible = true;
@@ -285,9 +288,9 @@ public enum Device {
                     new String[] { "su", "-c",
                             "LD_LIBRARY_PATH=/vendor/lib:/system/lib input keyevent 4" },
                     envp);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 }
