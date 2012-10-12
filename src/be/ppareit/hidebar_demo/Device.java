@@ -219,8 +219,7 @@ public enum Device {
                 Log.v(TAG, "showBar will show systembar");
                 // execute in correct environment
                 String command;
-                Device dev = Device.getInstance();
-                if (dev.getAndroidVersion() == AndroidVersion.HC) {
+                if (getAndroidVersion() == AndroidVersion.HC) {
                     command = "LD_LIBRARY_PATH=/vendor/lib:/system/lib am startservice -n com.android.systemui/.SystemUIService";
                 } else {
                     command = "rm /sdcard/hidebar-lock\n"
@@ -240,8 +239,7 @@ public enum Device {
                 Log.v(TAG, "showBar will hide the systembar");
                 // execute in correct environment
                 String command;
-                Device dev = Device.getInstance();
-                if (dev.getAndroidVersion() == AndroidVersion.HC) {
+                if (getAndroidVersion() == AndroidVersion.HC) {
                     command = "LD_LIBRARY_PATH=/vendor/lib:/system/lib service call activity 79 s16 com.android.systemui";
                 } else {
                     command = "touch /sdcard/hidebar-lock\n"
