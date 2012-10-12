@@ -110,6 +110,58 @@ public class RestoreSystembarService extends Service {
             mTouchAreas.add(touchLayout);
             break;
         }
+        case TOP_TOUCH: {
+            WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+            WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                    LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT,
+                    LayoutParams.TYPE_SYSTEM_ALERT, LayoutParams.FLAG_NOT_FOCUSABLE
+                            | LayoutParams.FLAG_NOT_TOUCH_MODAL
+                            | LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, PixelFormat.OPAQUE);
+            params.alpha = 0.0f;
+            params.height = 25;
+            params.gravity = Gravity.BOTTOM;
+            params.x = 0;
+            params.y = 0;
+            LinearLayout bottomLayout = new LinearLayout(this);
+            bottomLayout.setBackgroundColor(0x00FFFFFF);
+            bottomLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
+                    LayoutParams.WRAP_CONTENT));
+            if (HideBarPreferences.ghostbackButton(this)) {
+                View backArea = new View(this);
+                backArea.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        Log.d(TAG, "backArea touched");
+                        Device device = Device.getInstance();
+                        device.sendBackEvent();
+                        return false;
+                    }
+                });
+                bottomLayout.addView(backArea, 40, 25);
+            }
+            wm.addView(bottomLayout, params);
+            mTouchAreas.add(bottomLayout);
+
+            params.gravity = Gravity.TOP;
+            LinearLayout topLayout = new LinearLayout(this);
+            topLayout.setBackgroundColor(0x00FFFFFF);
+            topLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
+                    LayoutParams.WRAP_CONTENT));
+            View topArea = new View(this);
+            topArea.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    Log.d(TAG, "touchArea touched");
+                    Device device = Device.getInstance();
+                    device.showSystembar(true);
+                    return false;
+                }
+            });
+            topLayout.addView(topArea);
+            wm.addView(topLayout, params);
+            mTouchAreas.add(topLayout);
+            break;
+        }
         case BOTTOM_TOP_TOUCH: {
             WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
             WindowManager.LayoutParams params = new WindowManager.LayoutParams(

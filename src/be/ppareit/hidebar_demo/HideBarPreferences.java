@@ -187,7 +187,7 @@ public class HideBarPreferences extends PreferenceActivity {
     }
 
     public enum ShowMethod {
-        NONE, BOTTOM_TOUCH, BOTTOM_TOP_TOUCH;
+        NONE, BOTTOM_TOUCH, BOTTOM_TOP_TOUCH, TOP_TOUCH;
     }
 
     static public ShowMethod methodToShowBar(Context context) {
