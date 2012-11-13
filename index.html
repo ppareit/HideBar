@@ -13,7 +13,7 @@
 <center>
 <a href="https://play.google.com/store/apps/details?id=be.ppareit.hidebar">Market</a>
 &nbsp;&nbsp;&nbsp;&nbsp;
-<a href="https://github.com/downloads/ppareit/HideBar/HideBar_demo_1_8.apk">Free Demo</a>
+<a href="https://github.com/downloads/ppareit/HideBar/HideBar_demo_1_10.apk">Free Demo</a>
 </p>
 <img src="qr-code.png" height="140" width="140" />
 </center>
@@ -37,21 +37,10 @@ notification to hide the system bar.
 <li/>Tapping the bottom of the screen will reshow the system bar.
 </ul>
 
-<h2>Current bugs</h2>
-<ul>
-<li/>Some devices (ICS, JB) have a blinking wallpaper, use life wallpapers
-to get around this. In the future, a fix will be provided.
-<li/>Some devices (not many) are slow to reshow the systembar, up to half
-a minute and the ghost back button does not work. Other than that,
-everything else works.
-<li/>It might display a message that the tablet is not rooted,
-while you know that the tablet is rooted. This is because one of
-the methods that tests for root depends on busybox. Then you need to
-install busybox and run busybox at least once.
-</ul>
-
 <h2>History</h2>
 <ul>
+<li/> Version 1.10 (13/11/2012): Fixes the static wallpaper. Improves CPU usage a lot (Thanks Jan!).
+<li/> Version 1.9 (27/10/2012): Made the ghost button work on all devices, this also fixes the long delay on restore that some devices had. (no demo released)
 <li/> Version 1.8 (12/10/2012): No longer asks for root permission on every use.
 Add a method to show the systembar from the top.
 <li/> Version 1.7 (29/9/2012): Check for busybox. Updated icon.
@@ -125,36 +114,26 @@ The following people/companies have donated:
 <h2>Download</h2>
 You can find the full application at the android
 <a href="https://play.google.com/store/apps/details?id=be.ppareit.hidebar">market</a> or download
-the demo application <a href="https://github.com/downloads/ppareit/HideBar/HideBar_demo_1_8.apk">
+the demo application <a href="https://github.com/downloads/ppareit/HideBar/HideBar_demo_1_10.apk">
 here</a>. The demo version is fully functional. It will only show a small link to the market version
 for a short while. The market version will not contain that link. The demo version needs to be side
 loaded. The market version can be installed like all other android applications.
 </p>
 
 If you need this application installed on many devices for the kiosk mode,
-let me know and I'll provide you with a build without the link to the market.
+let <a href="mailto:pieter.pareit@gmail.com">me</a> know. I provide custom
+builds depending on use case.
 </p>
 
 If the systembar does not hide, then make sure you have installed SuperUser and BusyBox
 and both are of a recent version. BusyBox must be run after installation to work. Most
 rooting methods install both applications but some leave that step to you.
 
-<h2>License</h2>
-<p>GNU General Public License version 3.0</p>
-
 <h2>About</h2>
 <ul>
 <li/>Programming: <a href="mailto:pieter.pareit@gmail.com">Pieter Pareit</a>
 <li/>Art design: Birgit Niemegeers
-<li/>Credits: <a href="http://android.serverbox.ch/">Manuel Di Cerbo</a> research on
-hiding the systembar.
 </ul>
-
-<h2>Code</h2>
-Hide Bar is open source software, for which the code is available on github. See 
-<a href="http://github.com/ppareit/HideBar">ppareit/HideBar</a>. You can also clone the
-project with <a href="http://git-scm.com">Git</a> by running:
-<pre>$ git clone git://github.com/ppareit/HideBar</pre>
 
 <p>
 You can <a href="mailto:pieter.pareit@gmail.com">mail</a> me with any comment, suggestion
