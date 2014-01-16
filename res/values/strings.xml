@@ -1,0 +1,6 @@
+<resources>
+
+    <string name="app_name">HideBar_IntentTest</string>
+    <string name="title_activity_main">HideBar Intent Test</string>
+
+</resources>
